@@ -146,7 +146,7 @@ function StudyPage() {
         mode: pomodoro ? "focus" : "study",
         planned_minutes: planned,
       });
-      setSessionId(s.id);
+      setSessionId(s?.id ?? null);
       setRemaining(length * 60);
       setElapsed(0);
       setOnBreak(false);
