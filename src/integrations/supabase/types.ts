@@ -14,7 +14,289 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      learning_days: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          day_number: number
+          estimated_minutes: number
+          id: string
+          notes: string | null
+          planned_date: string | null
+          status: string
+          subject_id: string
+          subtopics: string[]
+          topic: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          day_number: number
+          estimated_minutes?: number
+          id?: string
+          notes?: string | null
+          planned_date?: string | null
+          status?: string
+          subject_id: string
+          subtopics?: string[]
+          topic: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          day_number?: number
+          estimated_minutes?: number
+          id?: string
+          notes?: string | null
+          planned_date?: string | null
+          status?: string
+          subject_id?: string
+          subtopics?: string[]
+          topic?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_days_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          coding_level: string | null
+          created_at: string
+          daily_target_minutes: number
+          default_session_minutes: number
+          display_name: string | null
+          id: string
+          languages: string[]
+          onboarded: boolean
+          pomodoro_break_minutes: number
+          pomodoro_focus_minutes: number
+          preferred_study_time: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          coding_level?: string | null
+          created_at?: string
+          daily_target_minutes?: number
+          default_session_minutes?: number
+          display_name?: string | null
+          id: string
+          languages?: string[]
+          onboarded?: boolean
+          pomodoro_break_minutes?: number
+          pomodoro_focus_minutes?: number
+          preferred_study_time?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          coding_level?: string | null
+          created_at?: string
+          daily_target_minutes?: number
+          default_session_minutes?: number
+          display_name?: string | null
+          id?: string
+          languages?: string[]
+          onboarded?: boolean
+          pomodoro_break_minutes?: number
+          pomodoro_focus_minutes?: number
+          preferred_study_time?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      study_sessions: {
+        Row: {
+          actual_minutes: number
+          completed_notes: string | null
+          created_at: string
+          difficulty: number | null
+          ended_at: string | null
+          id: string
+          learning_day_id: string | null
+          mode: string
+          planned_minutes: number
+          started_at: string
+          struggled_with: string | null
+          subject_id: string | null
+          topic: string | null
+          understood: boolean | null
+          user_id: string
+          wants_practice: boolean | null
+        }
+        Insert: {
+          actual_minutes?: number
+          completed_notes?: string | null
+          created_at?: string
+          difficulty?: number | null
+          ended_at?: string | null
+          id?: string
+          learning_day_id?: string | null
+          mode?: string
+          planned_minutes?: number
+          started_at?: string
+          struggled_with?: string | null
+          subject_id?: string | null
+          topic?: string | null
+          understood?: boolean | null
+          user_id: string
+          wants_practice?: boolean | null
+        }
+        Update: {
+          actual_minutes?: number
+          completed_notes?: string | null
+          created_at?: string
+          difficulty?: number | null
+          ended_at?: string | null
+          id?: string
+          learning_day_id?: string | null
+          mode?: string
+          planned_minutes?: number
+          started_at?: string
+          struggled_with?: string | null
+          subject_id?: string | null
+          topic?: string | null
+          understood?: boolean | null
+          user_id?: string
+          wants_practice?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_sessions_learning_day_id_fkey"
+            columns: ["learning_day_id"]
+            isOneToOne: false
+            referencedRelation: "learning_days"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_sessions_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subjects: {
+        Row: {
+          archived: boolean
+          category: string | null
+          color: string
+          created_at: string
+          description: string | null
+          difficulty: string
+          icon: string
+          id: string
+          name: string
+          sort_order: number
+          start_date: string | null
+          target_date: string | null
+          total_planned_days: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          archived?: boolean
+          category?: string | null
+          color?: string
+          created_at?: string
+          description?: string | null
+          difficulty?: string
+          icon?: string
+          id?: string
+          name: string
+          sort_order?: number
+          start_date?: string | null
+          target_date?: string | null
+          total_planned_days?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          archived?: boolean
+          category?: string | null
+          color?: string
+          created_at?: string
+          description?: string | null
+          difficulty?: string
+          icon?: string
+          id?: string
+          name?: string
+          sort_order?: number
+          start_date?: string | null
+          target_date?: string | null
+          total_planned_days?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          estimated_minutes: number | null
+          id: string
+          priority: string
+          status: string
+          subject_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          estimated_minutes?: number | null
+          id?: string
+          priority?: string
+          status?: string
+          subject_id?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          estimated_minutes?: number | null
+          id?: string
+          priority?: string
+          status?: string
+          subject_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
