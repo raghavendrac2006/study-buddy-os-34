@@ -37,6 +37,8 @@ const PRIORITIES = [
   { value: "low", label: "Low" },
 ];
 
+const isDone = (t: { status: string }) => t.status === "completed";
+
 const priorityTone: Record<string, string> = {
   high: "text-destructive",
   medium: "text-flame",
@@ -59,10 +61,10 @@ function TasksPage() {
   const list = useMemo(() => {
     const all = tasks.data ?? [];
     const filtered =
-      filter === "all" ? all : all.filter((t) => (filter === "done" ? t.completed : !t.completed));
+      filter === "all" ? all : all.filter((t) => (filter === "done" ? isDone(t) : !isDone(t)));
     const rank: Record<string, number> = { high: 0, medium: 1, low: 2 };
     return [...filtered].sort((a, b) => {
-      if (a.completed !== b.completed) return a.completed ? 1 : -1;
+      if (isDone(a) !== isDone(b)) return isDone(a) ? 1 : -1;
       const d = (a.due_date ?? "9999").localeCompare(b.due_date ?? "9999");
       if (d !== 0) return d;
       return (rank[a.priority] ?? 1) - (rank[b.priority] ?? 1);
@@ -88,7 +90,7 @@ function TasksPage() {
     }
   };
 
-  const openCount = (tasks.data ?? []).filter((t) => !t.completed).length;
+  const openCount = (tasks.data ?? []).filter((t) => t.status !== "completed").length;
 
   return (
     <AppShell title="Tasks">
@@ -183,27 +185,27 @@ function TasksPage() {
         ) : (
           <ul className="space-y-2">
             {list.map((t) => {
-              const overdue = !t.completed && t.due_date && t.due_date < todayISO();
+              const overdue = !isDone(t) && t.due_date && t.due_date < todayISO();
               return (
                 <li key={t.id} className="surface flex items-center gap-3 p-4">
                   <button
-                    aria-label={t.completed ? "Mark incomplete" : "Mark complete"}
+                    aria-label={isDone(t) ? "Mark incomplete" : "Mark complete"}
                     onClick={() =>
                       updateTask.mutate({
                         id: t.id,
-                        completed: !t.completed,
-                        completed_at: t.completed ? null : new Date().toISOString(),
+                        status: isDone(t) ? "pending" : "completed",
+                        completed_at: isDone(t) ? null : new Date().toISOString(),
                       })
                     }
                   >
-                    {t.completed ? (
+                    {isDone(t) ? (
                       <CheckCircle2 className="size-5 text-success" />
                     ) : (
                       <Circle className="size-5 text-muted-foreground/50" />
                     )}
                   </button>
                   <div className="min-w-0 flex-1">
-                    <p className={cn("truncate text-sm", t.completed && "text-muted-foreground line-through")}>
+                    <p className={cn("truncate text-sm", isDone(t) && "text-muted-foreground line-through")}>
                       {t.title}
                     </p>
                     <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
