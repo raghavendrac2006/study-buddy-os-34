@@ -17,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/lib/theme";
 import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 import { useProfile, useUpdateProfile } from "@/lib/db";
 
 export const Route = createFileRoute("/_authenticated/settings")({
@@ -44,7 +45,7 @@ function SettingsPage() {
   const profile = useProfile();
   const updateProfile = useUpdateProfile();
   const { theme, setTheme } = useTheme();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
 
   const [form, setForm] = useState({
     display_name: "",
@@ -197,7 +198,10 @@ function SettingsPage() {
 
         <section className="surface space-y-3 p-5">
           <h3 className="text-sm font-semibold">Account</h3>
-          <Button variant="outline" onClick={() => signOut()}>
+          <Button variant="outline" onClick={async () => {
+              await supabase.auth.signOut();
+              window.location.href = "/";
+            }}>
             <LogOut className="size-4" /> Sign out
           </Button>
         </section>
