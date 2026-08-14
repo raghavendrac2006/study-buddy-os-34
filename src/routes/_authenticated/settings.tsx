@@ -196,14 +196,12 @@ function SettingsPage() {
           </div>
         </section>
 
-        <section className="surface space-y-3 p-5">
-          <h3 className="text-sm font-semibold">Account</h3>
-          <Button variant="outline" onClick={async () => {
-              await supabase.auth.signOut();
-              window.location.href = "/";
-            }}>
-            <LogOut className="size-4" /> Sign out
-          </Button>
+        <section className="surface space-y-2 p-5">
+          <h3 className="text-sm font-semibold">Workspace</h3>
+          <p className="text-sm text-muted-foreground">
+            This is your personal workspace — it opens straight to your dashboard, no sign-in needed.
+            All data is stored privately in your own cloud backend.
+          </p>
         </section>
       </div>
     </AppShell>
