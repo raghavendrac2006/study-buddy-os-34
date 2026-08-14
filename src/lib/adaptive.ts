@@ -155,8 +155,8 @@ export type SchedulableActivity = {
   locked: boolean;
   scheduled_date: string;
   status: string;
-  mastery?: number;
-  deadline?: string | null;
+  mastery?: number | undefined;
+  deadline?: string | null | undefined;
 };
 
 const TYPE_WEIGHT: Record<string, number> = {

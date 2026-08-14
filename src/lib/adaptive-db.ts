@@ -34,6 +34,13 @@ function unwrap<D>({ data, error }: { data: D; error: { message: string } | null
   return data;
 }
 
+/** Same as unwrap, but asserts a row actually came back. */
+function need<D>(res: { data: D; error: { message: string } | null }): NonNullable<D> {
+  const data = unwrap(res);
+  if (data == null) throw new Error("Record not found");
+  return data as NonNullable<D>;
+}
+
 /* ---------------- materials ---------------- */
 
 export function useMaterials() {
@@ -119,7 +126,7 @@ export function useSaveAnalysisTree() {
       const created: Topic[] = [];
 
       for (const unit of args.analysis.units) {
-        const unitRow = unwrap(
+        const unitRow = need(
           await supabase
             .from("topics")
             .insert({
@@ -137,7 +144,7 @@ export function useSaveAnalysisTree() {
         created.push(unitRow);
 
         for (const chapter of unit.chapters) {
-          const chapterRow = unwrap(
+          const chapterRow = need(
             await supabase
               .from("topics")
               .insert({
@@ -155,7 +162,7 @@ export function useSaveAnalysisTree() {
           );
           created.push(chapterRow);
 
-          const topicRows = unwrap(
+          const topicRows = need(
             await supabase
               .from("topics")
               .insert(
@@ -489,7 +496,7 @@ export function useRecordPerformance() {
       // Weak result → queue reinforcement activities near-term.
       const extra = reinforcementFor(args.signal);
       if (extra.length && args.planId) {
-        const topic = unwrap(
+        const topic = need(
           await supabase.from("topics").select("title").eq("id", args.topicId).single(),
         );
         await supabase.from("plan_activities").insert(
