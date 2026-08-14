@@ -13,6 +13,8 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { AdaptiveToday } from "@/components/adaptive-today";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -137,7 +139,10 @@ function Dashboard() {
           </h2>
         </header>
 
+        <AdaptiveToday />
+
         {/* Today's Mission */}
+
         <section className="surface overflow-hidden">
           <div className="border-b border-border bg-accent/40 px-5 py-4">
             <div className="flex items-center gap-2">

@@ -1,28 +1,29 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
-  Library,
+  FileStack,
+  CalendarRange,
+  Brain,
   Timer,
   CheckSquare,
-  Settings,
   Moon,
   Sun,
   Laptop,
-  LogOut,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useTheme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const NAV = [
   { to: "/dashboard", label: "Today", icon: LayoutDashboard },
-  { to: "/subjects", label: "Learn", icon: Library },
+  { to: "/materials", label: "Material", icon: FileStack },
+  { to: "/plans", label: "Plans", icon: CalendarRange },
+  { to: "/mastery", label: "Mastery", icon: Brain },
   { to: "/study", label: "Study", icon: Timer },
   { to: "/tasks", label: "Tasks", icon: CheckSquare },
-  { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
+
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -75,13 +76,8 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
         </nav>
         <div className="flex items-center justify-between border-t border-sidebar-border pt-3">
           <ThemeToggle />
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => supabase.auth.signOut()}
-            className="text-muted-foreground"
-          >
-            <LogOut className="size-4" /> Sign out
+          <Button variant="ghost" size="sm" asChild className="text-muted-foreground">
+            <Link to="/settings">Settings</Link>
           </Button>
         </div>
       </aside>
@@ -91,8 +87,8 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
           <h1 className="text-base font-semibold tracking-tight">{title ?? "Learning OS"}</h1>
           <div className="flex items-center gap-1 md:hidden">
             <ThemeToggle />
-            <Button variant="ghost" size="icon" aria-label="Sign out" onClick={() => supabase.auth.signOut()}>
-              <LogOut className="size-4" />
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/settings">Settings</Link>
             </Button>
           </div>
         </header>
