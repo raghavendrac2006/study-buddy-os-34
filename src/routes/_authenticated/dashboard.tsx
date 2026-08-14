@@ -13,6 +13,8 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { AdaptiveToday } from "@/components/adaptive-today";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
