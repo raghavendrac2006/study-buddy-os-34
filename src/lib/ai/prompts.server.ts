@@ -1,4 +1,8 @@
-export function analysisPrompt(input: { text: string; fileName: string; subjectHint?: string }) {
+export function analysisPrompt(input: {
+  text: string;
+  fileName: string;
+  subjectHint?: string | undefined;
+}) {
   const MAX = 90_000;
   const body = input.text.length > MAX ? `${input.text.slice(0, MAX)}\n...[truncated]` : input.text;
   return {
