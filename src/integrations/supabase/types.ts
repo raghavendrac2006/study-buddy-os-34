@@ -14,6 +14,70 @@ export type Database = {
   }
   public: {
     Tables: {
+      assessments: {
+        Row: {
+          activity_id: string | null
+          created_at: string
+          id: string
+          kind: string
+          max_score: number
+          notes: string | null
+          plan_id: string | null
+          score: number
+          taken_at: string
+          topic_id: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          max_score?: number
+          notes?: string | null
+          plan_id?: string | null
+          score?: number
+          taken_at?: string
+          topic_id?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          max_score?: number
+          notes?: string | null
+          plan_id?: string | null
+          score?: number
+          taken_at?: string
+          topic_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessments_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "plan_activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessments_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "learning_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessments_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       learning_days: {
         Row: {
           completed_at: string | null
@@ -70,6 +134,437 @@ export type Database = {
           },
         ]
       }
+      learning_objectives: {
+        Row: {
+          created_at: string
+          id: string
+          sort_order: number
+          text: string
+          topic_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          sort_order?: number
+          text: string
+          topic_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          sort_order?: number
+          text?: string
+          topic_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_objectives_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_plans: {
+        Row: {
+          created_at: string
+          daily_minutes: number
+          feasibility: Json
+          id: string
+          knowledge_level: string
+          material_id: string | null
+          notes: string | null
+          preferred_days: number[]
+          priority: string
+          status: string
+          subject_id: string | null
+          target_date: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          daily_minutes?: number
+          feasibility?: Json
+          id?: string
+          knowledge_level?: string
+          material_id?: string | null
+          notes?: string | null
+          preferred_days?: number[]
+          priority?: string
+          status?: string
+          subject_id?: string | null
+          target_date?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          daily_minutes?: number
+          feasibility?: Json
+          id?: string
+          knowledge_level?: string
+          material_id?: string | null
+          notes?: string | null
+          preferred_days?: number[]
+          priority?: string
+          status?: string
+          subject_id?: string | null
+          target_date?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_plans_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learning_plans_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mastery_history: {
+        Row: {
+          created_at: string
+          id: string
+          mastery: number
+          reason: string | null
+          state: string
+          topic_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mastery: number
+          reason?: string | null
+          state: string
+          topic_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mastery?: number
+          reason?: string | null
+          state?: string
+          topic_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mastery_history_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      material_analyses: {
+        Row: {
+          created_at: string
+          id: string
+          material_id: string
+          model: string
+          result: Json
+          summary: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          material_id: string
+          model?: string
+          result?: Json
+          summary?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          material_id?: string
+          model?: string
+          result?: Json
+          summary?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "material_analyses_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      materials: {
+        Row: {
+          char_count: number
+          created_at: string
+          error_message: string | null
+          extracted_text: string | null
+          file_name: string
+          id: string
+          mime_type: string
+          size_bytes: number
+          status: string
+          storage_path: string | null
+          subject_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          char_count?: number
+          created_at?: string
+          error_message?: string | null
+          extracted_text?: string | null
+          file_name: string
+          id?: string
+          mime_type?: string
+          size_bytes?: number
+          status?: string
+          storage_path?: string | null
+          subject_id?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          char_count?: number
+          created_at?: string
+          error_message?: string | null
+          extracted_text?: string | null
+          file_name?: string
+          id?: string
+          mime_type?: string
+          size_bytes?: number
+          status?: string
+          storage_path?: string | null
+          subject_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "materials_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      performance_records: {
+        Row: {
+          activity_id: string | null
+          activity_type: string
+          actual_minutes: number
+          completion: number
+          confidence: number | null
+          created_at: string
+          difficulty: number | null
+          id: string
+          planned_minutes: number
+          reflection: string | null
+          score: number | null
+          session_id: string | null
+          signals: Json
+          topic_id: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_id?: string | null
+          activity_type?: string
+          actual_minutes?: number
+          completion?: number
+          confidence?: number | null
+          created_at?: string
+          difficulty?: number | null
+          id?: string
+          planned_minutes?: number
+          reflection?: string | null
+          score?: number | null
+          session_id?: string | null
+          signals?: Json
+          topic_id?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_id?: string | null
+          activity_type?: string
+          actual_minutes?: number
+          completion?: number
+          confidence?: number | null
+          created_at?: string
+          difficulty?: number | null
+          id?: string
+          planned_minutes?: number
+          reflection?: string | null
+          score?: number | null
+          session_id?: string | null
+          signals?: Json
+          topic_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_records_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "plan_activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_records_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_records_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_activities: {
+        Row: {
+          activity_type: string
+          actual_minutes: number
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          estimated_minutes: number
+          id: string
+          locked: boolean
+          plan_id: string
+          priority: number
+          scheduled_date: string
+          sort_order: number
+          source: string
+          status: string
+          title: string
+          topic_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          activity_type?: string
+          actual_minutes?: number
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          estimated_minutes?: number
+          id?: string
+          locked?: boolean
+          plan_id: string
+          priority?: number
+          scheduled_date: string
+          sort_order?: number
+          source?: string
+          status?: string
+          title: string
+          topic_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          actual_minutes?: number
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          estimated_minutes?: number
+          id?: string
+          locked?: boolean
+          plan_id?: string
+          priority?: number
+          scheduled_date?: string
+          sort_order?: number
+          source?: string
+          status?: string
+          title?: string
+          topic_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_activities_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "learning_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_activities_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_adjustments: {
+        Row: {
+          adjusted_on: string
+          created_at: string
+          details: Json
+          id: string
+          plan_id: string | null
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          adjusted_on?: string
+          created_at?: string
+          details?: Json
+          id?: string
+          plan_id?: string | null
+          reason: string
+          user_id: string
+        }
+        Update: {
+          adjusted_on?: string
+          created_at?: string
+          details?: Json
+          id?: string
+          plan_id?: string | null
+          reason?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_adjustments_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "learning_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -117,6 +612,60 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      revision_schedule: {
+        Row: {
+          created_at: string
+          due_date: string
+          id: string
+          interval_days: number
+          plan_id: string | null
+          reason: string | null
+          status: string
+          topic_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          due_date: string
+          id?: string
+          interval_days?: number
+          plan_id?: string | null
+          reason?: string | null
+          status?: string
+          topic_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          due_date?: string
+          id?: string
+          interval_days?: number
+          plan_id?: string | null
+          reason?: string | null
+          status?: string
+          topic_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "revision_schedule_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "learning_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "revision_schedule_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       study_sessions: {
         Row: {
@@ -290,6 +839,138 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "tasks_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      topic_mastery: {
+        Row: {
+          created_at: string
+          ease: number
+          id: string
+          interval_days: number
+          lapses: number
+          last_reviewed_at: string | null
+          mastery: number
+          next_review_date: string | null
+          reps: number
+          state: string
+          topic_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ease?: number
+          id?: string
+          interval_days?: number
+          lapses?: number
+          last_reviewed_at?: string | null
+          mastery?: number
+          next_review_date?: string | null
+          reps?: number
+          state?: string
+          topic_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ease?: number
+          id?: string
+          interval_days?: number
+          lapses?: number
+          last_reviewed_at?: string | null
+          mastery?: number
+          next_review_date?: string | null
+          reps?: number
+          state?: string
+          topic_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_mastery_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      topics: {
+        Row: {
+          created_at: string
+          description: string | null
+          difficulty: number
+          estimated_minutes: number
+          id: string
+          key_concepts: string[]
+          kind: string
+          material_id: string | null
+          parent_id: string | null
+          prerequisites: string[]
+          sort_order: number
+          subject_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          difficulty?: number
+          estimated_minutes?: number
+          id?: string
+          key_concepts?: string[]
+          kind?: string
+          material_id?: string | null
+          parent_id?: string | null
+          prerequisites?: string[]
+          sort_order?: number
+          subject_id?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          difficulty?: number
+          estimated_minutes?: number
+          id?: string
+          key_concepts?: string[]
+          kind?: string
+          material_id?: string | null
+          parent_id?: string | null
+          prerequisites?: string[]
+          sort_order?: number
+          subject_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topics_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "topics_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "topics_subject_id_fkey"
             columns: ["subject_id"]
             isOneToOne: false
             referencedRelation: "subjects"
