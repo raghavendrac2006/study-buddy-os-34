@@ -28,6 +28,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { analyzeMaterial, generatePlan } from "@/lib/ai.functions";
 import { friendlyAiError } from "@/lib/ai/errors";
 import type { Analysis } from "@/lib/ai/schemas";
+import type { Json } from "@/integrations/supabase/types";
 import { feasibility, today } from "@/lib/adaptive";
 import {
   useCreateActivities,
@@ -104,9 +105,9 @@ function MaterialDetail() {
         material_id: id,
         model: res.model,
         summary: res.analysis.summary ?? "",
-        result: res.analysis as unknown as Record<string, unknown>,
+        result: res.analysis as unknown as Json,
       });
-      setAnalysis(res.analysis);
+      setAnalysis(res.analysis as Analysis);
       await updateMaterial.mutateAsync({ id, status: "analyzed" });
       toast.success("Structure extracted. Review and edit it below.");
     } catch (err) {
@@ -477,12 +478,12 @@ function PlanDialog({
       const rows = res.plan.days.flatMap((day, di) =>
         day.activities.map((a, ai) => ({
           plan_id: plan.id,
-          topic_id: byTitle.get(a.topic_title.toLowerCase().trim()) ?? null,
+          topic_id: byTitle.get((a.topic_title ?? "").toLowerCase().trim()) ?? null,
           scheduled_date: day.date,
-          activity_type: a.activity_type,
+          activity_type: a.activity_type ?? "learn",
           title: a.title,
           description: a.description ?? "",
-          estimated_minutes: Math.round(a.minutes),
+          estimated_minutes: Math.round(a.minutes ?? 30),
           priority: Math.round(a.priority ?? 3),
           sort_order: di * 100 + ai,
           source: "ai",

@@ -60,6 +60,8 @@ function MaterialsPage() {
         status: "uploaded",
       });
 
+      if (!material) throw new Error("Could not save the material");
+
       const { data: userData } = await supabase.auth.getUser();
       if (userData.user) {
         await supabase.storage

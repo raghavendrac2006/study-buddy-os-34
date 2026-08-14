@@ -18,6 +18,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedStudyRouteImport } from './routes/_authenticated/study'
 import { Route as AuthenticatedSubjectsRouteImport } from './routes/_authenticated/subjects'
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
+import { Route as AuthenticatedMaterialsIdRouteImport } from './routes/_authenticated/materials.$id'
 import { Route as AuthenticatedSubjectsIdRouteImport } from './routes/_authenticated/subjects.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -64,6 +65,12 @@ const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
   path: '/tasks',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMaterialsIdRoute =
+  AuthenticatedMaterialsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedMaterialsRoute,
+  } as any)
 const AuthenticatedSubjectsIdRoute = AuthenticatedSubjectsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -73,23 +80,25 @@ const AuthenticatedSubjectsIdRoute = AuthenticatedSubjectsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/materials': typeof AuthenticatedMaterialsRoute
+  '/materials': typeof AuthenticatedMaterialsRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/study': typeof AuthenticatedStudyRoute
   '/subjects': typeof AuthenticatedSubjectsRouteWithChildren
   '/tasks': typeof AuthenticatedTasksRoute
+  '/materials/$id': typeof AuthenticatedMaterialsIdRoute
   '/subjects/$id': typeof AuthenticatedSubjectsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/materials': typeof AuthenticatedMaterialsRoute
+  '/materials': typeof AuthenticatedMaterialsRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/study': typeof AuthenticatedStudyRoute
   '/subjects': typeof AuthenticatedSubjectsRouteWithChildren
   '/tasks': typeof AuthenticatedTasksRoute
+  '/materials/$id': typeof AuthenticatedMaterialsIdRoute
   '/subjects/$id': typeof AuthenticatedSubjectsIdRoute
 }
 export interface FileRoutesById {
@@ -97,12 +106,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/materials': typeof AuthenticatedMaterialsRoute
+  '/_authenticated/materials': typeof AuthenticatedMaterialsRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/study': typeof AuthenticatedStudyRoute
   '/_authenticated/subjects': typeof AuthenticatedSubjectsRouteWithChildren
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
+  '/_authenticated/materials/$id': typeof AuthenticatedMaterialsIdRoute
   '/_authenticated/subjects/$id': typeof AuthenticatedSubjectsIdRoute
 }
 export interface FileRouteTypes {
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/study'
     | '/subjects'
     | '/tasks'
+    | '/materials/$id'
     | '/subjects/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/study'
     | '/subjects'
     | '/tasks'
+    | '/materials/$id'
     | '/subjects/$id'
   id:
     | '__root__'
@@ -139,6 +151,7 @@ export interface FileRouteTypes {
     | '/_authenticated/study'
     | '/_authenticated/subjects'
     | '/_authenticated/tasks'
+    | '/_authenticated/materials/$id'
     | '/_authenticated/subjects/$id'
   fileRoutesById: FileRoutesById
 }
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTasksRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/materials/$id': {
+      id: '/_authenticated/materials/$id'
+      path: '/$id'
+      fullPath: '/materials/$id'
+      preLoaderRoute: typeof AuthenticatedMaterialsIdRouteImport
+      parentRoute: typeof AuthenticatedMaterialsRoute
+    }
     '/_authenticated/subjects/$id': {
       id: '/_authenticated/subjects/$id'
       path: '/$id'
@@ -221,6 +241,20 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AuthenticatedMaterialsRouteChildren {
+  AuthenticatedMaterialsIdRoute: typeof AuthenticatedMaterialsIdRoute
+}
+
+const AuthenticatedMaterialsRouteChildren: AuthenticatedMaterialsRouteChildren =
+  {
+    AuthenticatedMaterialsIdRoute: AuthenticatedMaterialsIdRoute,
+  }
+
+const AuthenticatedMaterialsRouteWithChildren =
+  AuthenticatedMaterialsRoute._addFileChildren(
+    AuthenticatedMaterialsRouteChildren,
+  )
 
 interface AuthenticatedSubjectsRouteChildren {
   AuthenticatedSubjectsIdRoute: typeof AuthenticatedSubjectsIdRoute
@@ -237,7 +271,7 @@ const AuthenticatedSubjectsRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedMaterialsRoute: typeof AuthenticatedMaterialsRoute
+  AuthenticatedMaterialsRoute: typeof AuthenticatedMaterialsRouteWithChildren
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStudyRoute: typeof AuthenticatedStudyRoute
@@ -247,7 +281,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedMaterialsRoute: AuthenticatedMaterialsRoute,
+  AuthenticatedMaterialsRoute: AuthenticatedMaterialsRouteWithChildren,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStudyRoute: AuthenticatedStudyRoute,
