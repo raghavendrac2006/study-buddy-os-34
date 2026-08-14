@@ -137,7 +137,10 @@ function Dashboard() {
           </h2>
         </header>
 
+        <AdaptiveToday />
+
         {/* Today's Mission */}
+
         <section className="surface overflow-hidden">
           <div className="border-b border-border bg-accent/40 px-5 py-4">
             <div className="flex items-center gap-2">
