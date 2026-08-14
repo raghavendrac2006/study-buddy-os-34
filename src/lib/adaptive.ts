@@ -22,16 +22,16 @@ export const MASTERY_LABEL: Record<MasteryState, string> = {
 
 export type PerformanceSignal = {
   /** 0–100 */
-  score?: number | null;
+  score?: number | null | undefined;
   /** 1–5 */
-  confidence?: number | null;
+  confidence?: number | null | undefined;
   /** 1–5, higher = harder */
-  difficulty?: number | null;
+  difficulty?: number | null | undefined;
   /** 0–1 */
-  completion?: number | null;
-  plannedMinutes?: number;
-  actualMinutes?: number;
-  activityType?: string;
+  completion?: number | null | undefined;
+  plannedMinutes?: number | undefined;
+  actualMinutes?: number | undefined;
+  activityType?: string | undefined;
 };
 
 export type MasteryRecord = {
@@ -228,10 +228,10 @@ export function nextStudyDate(from: string, preferredDays: number[]): string {
  */
 export function redistribute(args: {
   activities: SchedulableActivity[];
-  fromDate?: string;
+  fromDate?: string | undefined;
   dailyMinutes: number;
   preferredDays: number[];
-  targetDate?: string | null;
+  targetDate?: string | null | undefined;
 }): { updates: { id: string; scheduled_date: string }[]; overflow: SchedulableActivity[] } {
   const from = args.fromDate ?? today();
   const pending = args.activities
@@ -276,8 +276,8 @@ export function feasibility(args: {
   totalMinutes: number;
   dailyMinutes: number;
   preferredDays: number[];
-  targetDate?: string | null;
-  fromDate?: string;
+  targetDate?: string | null | undefined;
+  fromDate?: string | undefined;
 }): { feasible: boolean; message: string; requiredDays: number; availableDays: number } {
   const from = args.fromDate ?? today();
   const perDay = Math.max(15, args.dailyMinutes);

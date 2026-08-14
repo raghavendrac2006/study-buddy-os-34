@@ -392,12 +392,12 @@ export function useRecordPerformance() {
   return useMutation({
     mutationFn: async (args: {
       topicId: string;
-      activityId?: string | null;
-      sessionId?: string | null;
-      planId?: string | null;
-      activityType?: string;
+      activityId?: string | null | undefined;
+      sessionId?: string | null | undefined;
+      planId?: string | null | undefined;
+      activityType?: string | undefined;
       signal: PerformanceSignal;
-      reflection?: string;
+      reflection?: string | undefined;
     }) => {
       const user_id = await uid();
       const day = today();
@@ -545,8 +545,8 @@ export function useReplan() {
       plan: LearningPlan;
       activities: PlanActivity[];
       masteryByTopic: Record<string, number>;
-      fromDate?: string;
-      dailyMinutesOverride?: number;
+      fromDate?: string | undefined;
+      dailyMinutesOverride?: number | undefined;
       reason: string;
     }) => {
       const user_id = await uid();
