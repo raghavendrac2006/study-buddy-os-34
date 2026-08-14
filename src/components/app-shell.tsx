@@ -2,7 +2,8 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   FileStack,
-  Library,
+  CalendarRange,
+  Brain,
   Timer,
   CheckSquare,
   Moon,
@@ -17,10 +18,12 @@ import { Button } from "@/components/ui/button";
 const NAV = [
   { to: "/dashboard", label: "Today", icon: LayoutDashboard },
   { to: "/materials", label: "Material", icon: FileStack },
-  { to: "/subjects", label: "Learn", icon: Library },
+  { to: "/plans", label: "Plans", icon: CalendarRange },
+  { to: "/mastery", label: "Mastery", icon: Brain },
   { to: "/study", label: "Study", icon: Timer },
   { to: "/tasks", label: "Tasks", icon: CheckSquare },
 ] as const;
+
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
