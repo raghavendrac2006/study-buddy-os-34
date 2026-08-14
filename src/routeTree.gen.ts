@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedMasteryRouteImport } from './routes/_authenticated/mastery'
 import { Route as AuthenticatedMaterialsRouteImport } from './routes/_authenticated/materials'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedPlansRouteImport } from './routes/_authenticated/plans'
@@ -35,6 +36,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMasteryRoute = AuthenticatedMasteryRouteImport.update({
+  id: '/mastery',
+  path: '/mastery',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedMaterialsRoute = AuthenticatedMaterialsRouteImport.update({
@@ -92,6 +98,7 @@ const AuthenticatedSubjectsIdRoute = AuthenticatedSubjectsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/mastery': typeof AuthenticatedMasteryRoute
   '/materials': typeof AuthenticatedMaterialsRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/plans': typeof AuthenticatedPlansRouteWithChildren
@@ -106,6 +113,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/mastery': typeof AuthenticatedMasteryRoute
   '/materials': typeof AuthenticatedMaterialsRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/plans': typeof AuthenticatedPlansRouteWithChildren
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/mastery': typeof AuthenticatedMasteryRoute
   '/_authenticated/materials': typeof AuthenticatedMaterialsRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/plans': typeof AuthenticatedPlansRouteWithChildren
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/mastery'
     | '/materials'
     | '/onboarding'
     | '/plans'
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/dashboard'
+    | '/mastery'
     | '/materials'
     | '/onboarding'
     | '/plans'
@@ -167,6 +178,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/_authenticated/dashboard'
+    | '/_authenticated/mastery'
     | '/_authenticated/materials'
     | '/_authenticated/onboarding'
     | '/_authenticated/plans'
@@ -205,6 +217,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/mastery': {
+      id: '/_authenticated/mastery'
+      path: '/mastery'
+      fullPath: '/mastery'
+      preLoaderRoute: typeof AuthenticatedMasteryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/materials': {
@@ -320,6 +339,7 @@ const AuthenticatedSubjectsRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedMasteryRoute: typeof AuthenticatedMasteryRoute
   AuthenticatedMaterialsRoute: typeof AuthenticatedMaterialsRouteWithChildren
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPlansRoute: typeof AuthenticatedPlansRouteWithChildren
@@ -331,6 +351,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedMasteryRoute: AuthenticatedMasteryRoute,
   AuthenticatedMaterialsRoute: AuthenticatedMaterialsRouteWithChildren,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPlansRoute: AuthenticatedPlansRouteWithChildren,
