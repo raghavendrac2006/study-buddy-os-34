@@ -20,6 +20,7 @@ import { Route as AuthenticatedStudyRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedSubjectsRouteImport } from './routes/_authenticated/subjects'
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
 import { Route as AuthenticatedMaterialsIdRouteImport } from './routes/_authenticated/materials.$id'
+import { Route as AuthenticatedPlansIdRouteImport } from './routes/_authenticated/plans.$id'
 import { Route as AuthenticatedSubjectsIdRouteImport } from './routes/_authenticated/subjects.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -77,6 +78,11 @@ const AuthenticatedMaterialsIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedMaterialsRoute,
   } as any)
+const AuthenticatedPlansIdRoute = AuthenticatedPlansIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedPlansRoute,
+} as any)
 const AuthenticatedSubjectsIdRoute = AuthenticatedSubjectsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -88,12 +94,13 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/materials': typeof AuthenticatedMaterialsRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
-  '/plans': typeof AuthenticatedPlansRoute
+  '/plans': typeof AuthenticatedPlansRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
   '/study': typeof AuthenticatedStudyRoute
   '/subjects': typeof AuthenticatedSubjectsRouteWithChildren
   '/tasks': typeof AuthenticatedTasksRoute
   '/materials/$id': typeof AuthenticatedMaterialsIdRoute
+  '/plans/$id': typeof AuthenticatedPlansIdRoute
   '/subjects/$id': typeof AuthenticatedSubjectsIdRoute
 }
 export interface FileRoutesByTo {
@@ -101,12 +108,13 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/materials': typeof AuthenticatedMaterialsRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
-  '/plans': typeof AuthenticatedPlansRoute
+  '/plans': typeof AuthenticatedPlansRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
   '/study': typeof AuthenticatedStudyRoute
   '/subjects': typeof AuthenticatedSubjectsRouteWithChildren
   '/tasks': typeof AuthenticatedTasksRoute
   '/materials/$id': typeof AuthenticatedMaterialsIdRoute
+  '/plans/$id': typeof AuthenticatedPlansIdRoute
   '/subjects/$id': typeof AuthenticatedSubjectsIdRoute
 }
 export interface FileRoutesById {
@@ -116,12 +124,13 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/materials': typeof AuthenticatedMaterialsRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
-  '/_authenticated/plans': typeof AuthenticatedPlansRoute
+  '/_authenticated/plans': typeof AuthenticatedPlansRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/study': typeof AuthenticatedStudyRoute
   '/_authenticated/subjects': typeof AuthenticatedSubjectsRouteWithChildren
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_authenticated/materials/$id': typeof AuthenticatedMaterialsIdRoute
+  '/_authenticated/plans/$id': typeof AuthenticatedPlansIdRoute
   '/_authenticated/subjects/$id': typeof AuthenticatedSubjectsIdRoute
 }
 export interface FileRouteTypes {
@@ -137,6 +146,7 @@ export interface FileRouteTypes {
     | '/subjects'
     | '/tasks'
     | '/materials/$id'
+    | '/plans/$id'
     | '/subjects/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/subjects'
     | '/tasks'
     | '/materials/$id'
+    | '/plans/$id'
     | '/subjects/$id'
   id:
     | '__root__'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/_authenticated/subjects'
     | '/_authenticated/tasks'
     | '/_authenticated/materials/$id'
+    | '/_authenticated/plans/$id'
     | '/_authenticated/subjects/$id'
   fileRoutesById: FileRoutesById
 }
@@ -251,6 +263,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMaterialsIdRouteImport
       parentRoute: typeof AuthenticatedMaterialsRoute
     }
+    '/_authenticated/plans/$id': {
+      id: '/_authenticated/plans/$id'
+      path: '/$id'
+      fullPath: '/plans/$id'
+      preLoaderRoute: typeof AuthenticatedPlansIdRouteImport
+      parentRoute: typeof AuthenticatedPlansRoute
+    }
     '/_authenticated/subjects/$id': {
       id: '/_authenticated/subjects/$id'
       path: '/$id'
@@ -275,6 +294,17 @@ const AuthenticatedMaterialsRouteWithChildren =
     AuthenticatedMaterialsRouteChildren,
   )
 
+interface AuthenticatedPlansRouteChildren {
+  AuthenticatedPlansIdRoute: typeof AuthenticatedPlansIdRoute
+}
+
+const AuthenticatedPlansRouteChildren: AuthenticatedPlansRouteChildren = {
+  AuthenticatedPlansIdRoute: AuthenticatedPlansIdRoute,
+}
+
+const AuthenticatedPlansRouteWithChildren =
+  AuthenticatedPlansRoute._addFileChildren(AuthenticatedPlansRouteChildren)
+
 interface AuthenticatedSubjectsRouteChildren {
   AuthenticatedSubjectsIdRoute: typeof AuthenticatedSubjectsIdRoute
 }
@@ -292,7 +322,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedMaterialsRoute: typeof AuthenticatedMaterialsRouteWithChildren
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
-  AuthenticatedPlansRoute: typeof AuthenticatedPlansRoute
+  AuthenticatedPlansRoute: typeof AuthenticatedPlansRouteWithChildren
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStudyRoute: typeof AuthenticatedStudyRoute
   AuthenticatedSubjectsRoute: typeof AuthenticatedSubjectsRouteWithChildren
@@ -303,7 +333,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedMaterialsRoute: AuthenticatedMaterialsRouteWithChildren,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
-  AuthenticatedPlansRoute: AuthenticatedPlansRoute,
+  AuthenticatedPlansRoute: AuthenticatedPlansRouteWithChildren,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStudyRoute: AuthenticatedStudyRoute,
   AuthenticatedSubjectsRoute: AuthenticatedSubjectsRouteWithChildren,
