@@ -134,7 +134,9 @@ export async function aiJson<T>(args: {
           temperature: cfg.temperature,
           maxTokens: cfg.maxTokens,
           timeoutMs: cfg.timeoutMs,
+          reasoning: cfg.reasoning ?? false,
         });
+
         const parsed = args.schema.safeParse(extractJson(raw));
         if (parsed.success) return { data: parsed.data, model };
         lastError = new AiError("malformed", "The AI response did not match the expected format.");
