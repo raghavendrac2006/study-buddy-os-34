@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { extractText } from "@/lib/extract";
 import { useCreateMaterial, useDeleteMaterial, useMaterials } from "@/lib/adaptive-db";
 
-export const Route = createFileRoute("/_authenticated/materials")({
+export const Route = createFileRoute("/_authenticated/materials/")({
   head: () => ({
     meta: [
       { title: "Study material — Learning OS" },

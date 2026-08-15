@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useActivities, usePlans } from "@/lib/adaptive-db";
 
-export const Route = createFileRoute("/_authenticated/plans")({
+export const Route = createFileRoute("/_authenticated/plans/")({
   head: () => ({
     meta: [
       { title: "Learning plans — Learning OS" },
