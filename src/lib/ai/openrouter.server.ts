@@ -4,7 +4,7 @@ import { MODEL_CONFIG, modelsFor, type AiTask } from "./models";
 const ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
 
 export class AiError extends Error {
-  code: "missing_key" | "rate_limit" | "timeout" | "provider" | "malformed";
+  code: "missing_key" | "rate_limit" | "timeout" | "provider" | "malformed" | "empty" | "truncated";
   constructor(code: AiError["code"], message: string) {
     super(message);
     this.code = code;
