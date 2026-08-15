@@ -35,7 +35,7 @@ import {
 } from "@/lib/db";
 import { isoAddDays, todayISO } from "@/lib/scheduling";
 
-export const Route = createFileRoute("/_authenticated/subjects")({
+export const Route = createFileRoute("/_authenticated/subjects/")({
   head: () => ({
     meta: [
       { title: "Learn — Subjects & Plans" },
