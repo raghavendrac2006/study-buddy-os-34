@@ -13,15 +13,15 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedMasteryRouteImport } from './routes/_authenticated/mastery'
-import { Route as AuthenticatedMaterialsRouteImport } from './routes/_authenticated/materials'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
-import { Route as AuthenticatedPlansRouteImport } from './routes/_authenticated/plans'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedStudyRouteImport } from './routes/_authenticated/study'
-import { Route as AuthenticatedSubjectsRouteImport } from './routes/_authenticated/subjects'
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
+import { Route as AuthenticatedMaterialsIndexRouteImport } from './routes/_authenticated/materials.index'
 import { Route as AuthenticatedMaterialsIdRouteImport } from './routes/_authenticated/materials.$id'
+import { Route as AuthenticatedPlansIndexRouteImport } from './routes/_authenticated/plans.index'
 import { Route as AuthenticatedPlansIdRouteImport } from './routes/_authenticated/plans.$id'
+import { Route as AuthenticatedSubjectsIndexRouteImport } from './routes/_authenticated/subjects.index'
 import { Route as AuthenticatedSubjectsIdRouteImport } from './routes/_authenticated/subjects.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -43,19 +43,9 @@ const AuthenticatedMasteryRoute = AuthenticatedMasteryRouteImport.update({
   path: '/mastery',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedMaterialsRoute = AuthenticatedMaterialsRouteImport.update({
-  id: '/materials',
-  path: '/materials',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedPlansRoute = AuthenticatedPlansRouteImport.update({
-  id: '/plans',
-  path: '/plans',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
@@ -68,62 +58,74 @@ const AuthenticatedStudyRoute = AuthenticatedStudyRouteImport.update({
   path: '/study',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedSubjectsRoute = AuthenticatedSubjectsRouteImport.update({
-  id: '/subjects',
-  path: '/subjects',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMaterialsIndexRoute =
+  AuthenticatedMaterialsIndexRouteImport.update({
+    id: '/materials/',
+    path: '/materials/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMaterialsIdRoute =
   AuthenticatedMaterialsIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedMaterialsRoute,
+    id: '/materials/$id',
+    path: '/materials/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedPlansIdRoute = AuthenticatedPlansIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AuthenticatedPlansRoute,
+const AuthenticatedPlansIndexRoute = AuthenticatedPlansIndexRouteImport.update({
+  id: '/plans/',
+  path: '/plans/',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPlansIdRoute = AuthenticatedPlansIdRouteImport.update({
+  id: '/plans/$id',
+  path: '/plans/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSubjectsIndexRoute =
+  AuthenticatedSubjectsIndexRouteImport.update({
+    id: '/subjects/',
+    path: '/subjects/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSubjectsIdRoute = AuthenticatedSubjectsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AuthenticatedSubjectsRoute,
+  id: '/subjects/$id',
+  path: '/subjects/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/mastery': typeof AuthenticatedMasteryRoute
-  '/materials': typeof AuthenticatedMaterialsRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
-  '/plans': typeof AuthenticatedPlansRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
   '/study': typeof AuthenticatedStudyRoute
-  '/subjects': typeof AuthenticatedSubjectsRouteWithChildren
   '/tasks': typeof AuthenticatedTasksRoute
   '/materials/$id': typeof AuthenticatedMaterialsIdRoute
   '/plans/$id': typeof AuthenticatedPlansIdRoute
   '/subjects/$id': typeof AuthenticatedSubjectsIdRoute
+  '/materials/': typeof AuthenticatedMaterialsIndexRoute
+  '/plans/': typeof AuthenticatedPlansIndexRoute
+  '/subjects/': typeof AuthenticatedSubjectsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/mastery': typeof AuthenticatedMasteryRoute
-  '/materials': typeof AuthenticatedMaterialsRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
-  '/plans': typeof AuthenticatedPlansRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRoute
   '/study': typeof AuthenticatedStudyRoute
-  '/subjects': typeof AuthenticatedSubjectsRouteWithChildren
   '/tasks': typeof AuthenticatedTasksRoute
   '/materials/$id': typeof AuthenticatedMaterialsIdRoute
   '/plans/$id': typeof AuthenticatedPlansIdRoute
   '/subjects/$id': typeof AuthenticatedSubjectsIdRoute
+  '/materials': typeof AuthenticatedMaterialsIndexRoute
+  '/plans': typeof AuthenticatedPlansIndexRoute
+  '/subjects': typeof AuthenticatedSubjectsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -131,16 +133,16 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/mastery': typeof AuthenticatedMasteryRoute
-  '/_authenticated/materials': typeof AuthenticatedMaterialsRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
-  '/_authenticated/plans': typeof AuthenticatedPlansRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/study': typeof AuthenticatedStudyRoute
-  '/_authenticated/subjects': typeof AuthenticatedSubjectsRouteWithChildren
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_authenticated/materials/$id': typeof AuthenticatedMaterialsIdRoute
   '/_authenticated/plans/$id': typeof AuthenticatedPlansIdRoute
   '/_authenticated/subjects/$id': typeof AuthenticatedSubjectsIdRoute
+  '/_authenticated/materials/': typeof AuthenticatedMaterialsIndexRoute
+  '/_authenticated/plans/': typeof AuthenticatedPlansIndexRoute
+  '/_authenticated/subjects/': typeof AuthenticatedSubjectsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -148,47 +150,47 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/mastery'
-    | '/materials'
     | '/onboarding'
-    | '/plans'
     | '/settings'
     | '/study'
-    | '/subjects'
     | '/tasks'
     | '/materials/$id'
     | '/plans/$id'
     | '/subjects/$id'
+    | '/materials/'
+    | '/plans/'
+    | '/subjects/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/dashboard'
     | '/mastery'
-    | '/materials'
     | '/onboarding'
-    | '/plans'
     | '/settings'
     | '/study'
-    | '/subjects'
     | '/tasks'
     | '/materials/$id'
     | '/plans/$id'
     | '/subjects/$id'
+    | '/materials'
+    | '/plans'
+    | '/subjects'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/_authenticated/dashboard'
     | '/_authenticated/mastery'
-    | '/_authenticated/materials'
     | '/_authenticated/onboarding'
-    | '/_authenticated/plans'
     | '/_authenticated/settings'
     | '/_authenticated/study'
-    | '/_authenticated/subjects'
     | '/_authenticated/tasks'
     | '/_authenticated/materials/$id'
     | '/_authenticated/plans/$id'
     | '/_authenticated/subjects/$id'
+    | '/_authenticated/materials/'
+    | '/_authenticated/plans/'
+    | '/_authenticated/subjects/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -226,25 +228,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMasteryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/materials': {
-      id: '/_authenticated/materials'
-      path: '/materials'
-      fullPath: '/materials'
-      preLoaderRoute: typeof AuthenticatedMaterialsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/onboarding': {
       id: '/_authenticated/onboarding'
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/plans': {
-      id: '/_authenticated/plans'
-      path: '/plans'
-      fullPath: '/plans'
-      preLoaderRoute: typeof AuthenticatedPlansRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings': {
@@ -261,13 +249,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudyRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/subjects': {
-      id: '/_authenticated/subjects'
-      path: '/subjects'
-      fullPath: '/subjects'
-      preLoaderRoute: typeof AuthenticatedSubjectsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/tasks': {
       id: '/_authenticated/tasks'
       path: '/tasks'
@@ -275,90 +256,79 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTasksRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/materials/': {
+      id: '/_authenticated/materials/'
+      path: '/materials'
+      fullPath: '/materials/'
+      preLoaderRoute: typeof AuthenticatedMaterialsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/materials/$id': {
       id: '/_authenticated/materials/$id'
-      path: '/$id'
+      path: '/materials/$id'
       fullPath: '/materials/$id'
       preLoaderRoute: typeof AuthenticatedMaterialsIdRouteImport
-      parentRoute: typeof AuthenticatedMaterialsRoute
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/plans/': {
+      id: '/_authenticated/plans/'
+      path: '/plans'
+      fullPath: '/plans/'
+      preLoaderRoute: typeof AuthenticatedPlansIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/plans/$id': {
       id: '/_authenticated/plans/$id'
-      path: '/$id'
+      path: '/plans/$id'
       fullPath: '/plans/$id'
       preLoaderRoute: typeof AuthenticatedPlansIdRouteImport
-      parentRoute: typeof AuthenticatedPlansRoute
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/subjects/': {
+      id: '/_authenticated/subjects/'
+      path: '/subjects'
+      fullPath: '/subjects/'
+      preLoaderRoute: typeof AuthenticatedSubjectsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/subjects/$id': {
       id: '/_authenticated/subjects/$id'
-      path: '/$id'
+      path: '/subjects/$id'
       fullPath: '/subjects/$id'
       preLoaderRoute: typeof AuthenticatedSubjectsIdRouteImport
-      parentRoute: typeof AuthenticatedSubjectsRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
-
-interface AuthenticatedMaterialsRouteChildren {
-  AuthenticatedMaterialsIdRoute: typeof AuthenticatedMaterialsIdRoute
-}
-
-const AuthenticatedMaterialsRouteChildren: AuthenticatedMaterialsRouteChildren =
-  {
-    AuthenticatedMaterialsIdRoute: AuthenticatedMaterialsIdRoute,
-  }
-
-const AuthenticatedMaterialsRouteWithChildren =
-  AuthenticatedMaterialsRoute._addFileChildren(
-    AuthenticatedMaterialsRouteChildren,
-  )
-
-interface AuthenticatedPlansRouteChildren {
-  AuthenticatedPlansIdRoute: typeof AuthenticatedPlansIdRoute
-}
-
-const AuthenticatedPlansRouteChildren: AuthenticatedPlansRouteChildren = {
-  AuthenticatedPlansIdRoute: AuthenticatedPlansIdRoute,
-}
-
-const AuthenticatedPlansRouteWithChildren =
-  AuthenticatedPlansRoute._addFileChildren(AuthenticatedPlansRouteChildren)
-
-interface AuthenticatedSubjectsRouteChildren {
-  AuthenticatedSubjectsIdRoute: typeof AuthenticatedSubjectsIdRoute
-}
-
-const AuthenticatedSubjectsRouteChildren: AuthenticatedSubjectsRouteChildren = {
-  AuthenticatedSubjectsIdRoute: AuthenticatedSubjectsIdRoute,
-}
-
-const AuthenticatedSubjectsRouteWithChildren =
-  AuthenticatedSubjectsRoute._addFileChildren(
-    AuthenticatedSubjectsRouteChildren,
-  )
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedMasteryRoute: typeof AuthenticatedMasteryRoute
-  AuthenticatedMaterialsRoute: typeof AuthenticatedMaterialsRouteWithChildren
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
-  AuthenticatedPlansRoute: typeof AuthenticatedPlansRouteWithChildren
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStudyRoute: typeof AuthenticatedStudyRoute
-  AuthenticatedSubjectsRoute: typeof AuthenticatedSubjectsRouteWithChildren
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
+  AuthenticatedMaterialsIdRoute: typeof AuthenticatedMaterialsIdRoute
+  AuthenticatedPlansIdRoute: typeof AuthenticatedPlansIdRoute
+  AuthenticatedSubjectsIdRoute: typeof AuthenticatedSubjectsIdRoute
+  AuthenticatedMaterialsIndexRoute: typeof AuthenticatedMaterialsIndexRoute
+  AuthenticatedPlansIndexRoute: typeof AuthenticatedPlansIndexRoute
+  AuthenticatedSubjectsIndexRoute: typeof AuthenticatedSubjectsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedMasteryRoute: AuthenticatedMasteryRoute,
-  AuthenticatedMaterialsRoute: AuthenticatedMaterialsRouteWithChildren,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
-  AuthenticatedPlansRoute: AuthenticatedPlansRouteWithChildren,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStudyRoute: AuthenticatedStudyRoute,
-  AuthenticatedSubjectsRoute: AuthenticatedSubjectsRouteWithChildren,
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
+  AuthenticatedMaterialsIdRoute: AuthenticatedMaterialsIdRoute,
+  AuthenticatedPlansIdRoute: AuthenticatedPlansIdRoute,
+  AuthenticatedSubjectsIdRoute: AuthenticatedSubjectsIdRoute,
+  AuthenticatedMaterialsIndexRoute: AuthenticatedMaterialsIndexRoute,
+  AuthenticatedPlansIndexRoute: AuthenticatedPlansIndexRoute,
+  AuthenticatedSubjectsIndexRoute: AuthenticatedSubjectsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
