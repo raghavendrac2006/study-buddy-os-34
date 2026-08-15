@@ -16,39 +16,60 @@ type TaskConfig = {
   temperature: number;
   maxTokens: number;
   timeoutMs: number;
+  /**
+   * Allow the model to emit chain-of-thought tokens.
+   * Keep false for structured JSON tasks: free reasoning models routed by
+   * `openrouter/free` otherwise spend the whole output budget on reasoning
+   * and return `content: null` with finish_reason "length".
+   */
+  reasoning?: boolean;
 };
+
+/**
+ * Free models known to answer directly (no reasoning preamble). Used as a last
+ * resort when the free router keeps returning empty content.
+ */
+export const SAFE_FREE_FALLBACKS = [
+  "meta-llama/llama-3.3-70b-instruct:free",
+  "mistralai/mistral-small-3.2-24b-instruct:free",
+];
 
 export const MODEL_CONFIG: Record<AiTask, TaskConfig> = {
   material_analysis: {
     model: "openrouter/free",
-    fallbacks: ["openrouter/auto"],
+    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
     heavyThresholdChars: 60_000,
     temperature: 0.2,
     maxTokens: 8000,
     timeoutMs: 120_000,
+    reasoning: false,
   },
   plan_generation: {
     model: "openrouter/free",
-    fallbacks: ["openrouter/auto"],
+    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
     temperature: 0.3,
     maxTokens: 8000,
     timeoutMs: 120_000,
+    reasoning: false,
   },
   daily_adaptation: {
     model: "openrouter/free",
-    fallbacks: ["openrouter/auto"],
+    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
     temperature: 0.3,
     maxTokens: 2000,
     timeoutMs: 60_000,
+    reasoning: false,
   },
   reflection: {
     model: "openrouter/free",
-    fallbacks: ["openrouter/auto"],
+    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
     temperature: 0.2,
     maxTokens: 1200,
     timeoutMs: 60_000,
+    reasoning: false,
   },
 };
+
 
 export function modelsFor(task: AiTask, inputChars = 0): string[] {
   const cfg = MODEL_CONFIG[task];
