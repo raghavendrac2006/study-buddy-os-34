@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { AdaptiveToday } from "@/components/adaptive-today";
+import { GoalsPanel } from "@/components/goals-panel";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -140,6 +141,8 @@ function Dashboard() {
         </header>
 
         <AdaptiveToday />
+
+        <GoalsPanel plannedMinutes={planMinutes} dailyBudget={target} />
 
         {/* Today's Mission */}
 
