@@ -1,7 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { FileText, Loader2, Trash2, Upload } from "lucide-react";
+import { FileText, Loader2, Trash2, Upload, Youtube } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { fetchYoutubeCourse } from "@/lib/youtube.functions";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +42,49 @@ function MaterialsPage() {
   const removeMaterial = useDeleteMaterial();
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
+  const [ytUrl, setYtUrl] = useState("");
+  const [ytBusy, setYtBusy] = useState(false);
+
+  const onYoutube = async () => {
+    if (!ytUrl.trim()) return;
+    setYtBusy(true);
+    try {
+      const course = await fetchYoutubeCourse({ data: { url: ytUrl.trim() } });
+      const material = await createMaterial.mutateAsync({
+        title: course.title,
+        file_name: course.url,
+        mime_type: "video/youtube",
+        source_type: "youtube",
+        source_url: course.url,
+        author: course.author,
+        duration_seconds: course.duration_seconds,
+        size_bytes: 0,
+        char_count: course.transcript.length,
+        extracted_text: course.transcript || null,
+        status: "uploaded",
+        metadata: {
+          video_id: course.video_id,
+          playlist_id: course.playlist_id,
+          chapters: course.chapters,
+          playlist_items: course.playlist_items,
+          description: course.description,
+          transcript_available: course.transcript_available,
+          chapters_available: course.chapters_available,
+          notes: course.notes,
+        },
+      });
+      if (!material) throw new Error("Could not save the course");
+      if (course.notes.length) toast.warning(course.notes.join(" "));
+      else toast.success("Course added. Next: structure it.");
+      setYtUrl("");
+      navigate({ to: "/materials/$id", params: { id: material.id } });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not read that YouTube link");
+    } finally {
+      setYtBusy(false);
+    }
+  };
+
 
   const onFile = async (file: File) => {
     setBusy(true);
@@ -121,8 +166,33 @@ function MaterialsPage() {
           </div>
         </section>
 
+        <section className="surface space-y-3 p-5">
+          <div className="flex items-center gap-2">
+            <Youtube className="size-5 text-primary" />
+            <div>
+              <p className="text-sm font-medium">Add a YouTube course</p>
+              <p className="text-xs text-muted-foreground">
+                Paste a video or playlist link. Chapters and captions are used when YouTube publishes them.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Input
+              className="min-w-48 flex-1"
+              placeholder="https://www.youtube.com/watch?v=…"
+              value={ytUrl}
+              onChange={(e) => setYtUrl(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && void onYoutube()}
+            />
+            <Button onClick={() => void onYoutube()} disabled={ytBusy || !ytUrl.trim()}>
+              {ytBusy && <Loader2 className="mr-2 size-4 animate-spin" />}
+              {ytBusy ? "Reading course…" : "Add course"}
+            </Button>
+          </div>
+        </section>
+
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold tracking-tight">Uploaded files</h3>
+          <h3 className="text-sm font-semibold tracking-tight">Your learning sources</h3>
           {materials.isLoading ? (
             <Skeleton className="h-24 w-full rounded-xl" />
           ) : (materials.data?.length ?? 0) === 0 ? (
@@ -133,7 +203,11 @@ function MaterialsPage() {
             <ul className="space-y-2">
               {materials.data!.map((m) => (
                 <li key={m.id} className="surface flex items-center gap-3 p-4">
-                  <FileText className="size-4 shrink-0 text-muted-foreground" />
+                  {m.source_type === "youtube" ? (
+                    <Youtube className="size-4 shrink-0 text-destructive" />
+                  ) : (
+                    <FileText className="size-4 shrink-0 text-muted-foreground" />
+                  )}
                   <Link
                     to="/materials/$id"
                     params={{ id: m.id }}
@@ -141,7 +215,9 @@ function MaterialsPage() {
                   >
                     <p className="truncate text-sm font-medium">{m.title}</p>
                     <p className="text-xs text-muted-foreground">
-                      {Math.round(m.char_count / 1000)}k characters · {m.file_name}
+                      {m.source_type === "youtube"
+                        ? `${Math.round(m.duration_seconds / 60)} min · ${m.author ?? "YouTube"}`
+                        : `${Math.round(m.char_count / 1000)}k characters · ${m.file_name}`}
                     </p>
                   </Link>
                   <Badge variant={m.status === "structured" ? "default" : "secondary"}>
