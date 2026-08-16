@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { usePerformance, useTopics } from "@/lib/adaptive-db";
+import { usePerformanceHistory, useTopics } from "@/lib/adaptive-db";
 import { useSessions } from "@/lib/db";
 import { useNotes } from "@/lib/workspace-db";
 
@@ -47,7 +47,7 @@ function HistoryPage() {
   const [kind, setKind] = useState("all");
   const [q, setQ] = useState("");
 
-  const performance = usePerformance();
+  const performance = usePerformanceHistory(300);
   const sessions = useSessions();
   const notes = useNotes();
   const topics = useTopics();
@@ -92,8 +92,8 @@ function HistoryPage() {
         key: `n-${n.id}`,
         at: n.created_at,
         kind: "note",
-        title: n.title || titleOf(n.topic_id),
-        detail: n.body.slice(0, 160),
+        title: titleOf(n.topic_id),
+        detail: n.content.slice(0, 160),
         topicId: n.topic_id,
       });
     }
