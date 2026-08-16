@@ -34,7 +34,8 @@ export function parseYoutubeUrl(raw: string): { videoId: string | null; playlist
   try {
     url = new URL(raw.trim());
   } catch {
-    return { videoId: /^[\w-]{11}$/.test(raw.trim()) ? { videoId: raw.trim() } .videoId : null, playlistId: null };
+    const bare = raw.trim();
+    return { videoId: /^[\w-]{11}$/.test(bare) ? bare : null, playlistId: null };
   }
   const host = url.hostname.replace(/^www\./, "");
   let videoId: string | null = null;
@@ -118,9 +119,7 @@ function chaptersFromInitialData(data: unknown): YoutubeChapter[] {
         arr(obj(item["title"])["runs"])
           .map((r) => str(obj(r)["text"]))
           .join("");
-      const ms = Number(item["timeDescriptionA11yLabel"] ? NaN : NaN);
-      void ms;
-      const onTap = obj(obj(obj(item["onTap"])["watchEndpoint"]) ?? {});
+      const onTap = obj(obj(item["onTap"])["watchEndpoint"]);
       const start = Number(onTap["startTimeSeconds"] ?? NaN);
       if (title && Number.isFinite(start)) out.push({ title, start_seconds: start });
     }
@@ -147,7 +146,7 @@ function playlistItems(data: unknown) {
           .map((x) => str(obj(x)["text"]))
           .join("");
       const videoId = str(r["videoId"]);
-      const seconds = Number(str(obj(r["lengthSeconds"])["toString"] ? "" : (r["lengthSeconds"] as string)) || 0);
+      const seconds = Number(r["lengthSeconds"] ?? 0) || 0;
       if (videoId && title) out.push({ title, video_id: videoId, duration_seconds: seconds || 0 });
     }
     for (const v of Object.values(n)) walk(v);
