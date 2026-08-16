@@ -24,6 +24,11 @@ import { useAssessments, useObjectives } from "@/lib/workspace-db";
 import { MASTERY_LABEL } from "@/lib/adaptive";
 
 export const Route = createFileRoute("/_authenticated/workspace/$topicId")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    activityId: typeof search.activityId === "string" ? search.activityId : undefined,
+    planId: typeof search.planId === "string" ? search.planId : undefined,
+    tab: typeof search.tab === "string" ? search.tab : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Learning workspace — My Study Compass" },
@@ -42,7 +47,7 @@ export const Route = createFileRoute("/_authenticated/workspace/$topicId")({
 
 function WorkspacePage() {
   const { topicId } = Route.useParams();
-  const search = Route.useSearch() as { activityId?: string; planId?: string; tab?: string };
+  const search = Route.useSearch();
 
   const topics = useTopics();
   const topic = (topics.data ?? []).find((t) => t.id === topicId) ?? null;
