@@ -44,9 +44,9 @@ import {
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Today's Mission — Learning OS" },
+      { title: "Today's Mission — My Study Compass" },
       { name: "description", content: "Your daily study mission, streak, plan and tasks in one view." },
-      { property: "og:title", content: "Today's Mission — Learning OS" },
+      { property: "og:title", content: "Today's Mission — My Study Compass" },
       { property: "og:description", content: "What to learn, practise and revise today." },
     ],
   }),

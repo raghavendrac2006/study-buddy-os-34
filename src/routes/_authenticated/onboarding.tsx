@@ -17,9 +17,9 @@ import { SUBJECT_TEMPLATES, type SubjectTemplate } from "@/lib/templates";
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({
     meta: [
-      { title: "Set up your plan — Learning OS" },
+      { title: "Set up your plan — My Study Compass" },
       { name: "description", content: "Tell your study system what you're learning and how much time you have." },
-      { property: "og:title", content: "Set up your plan — Learning OS" },
+      { property: "og:title", content: "Set up your plan — My Study Compass" },
       { property: "og:description", content: "Create your first study plan in under a minute." },
     ],
   }),

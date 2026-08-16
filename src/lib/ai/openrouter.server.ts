@@ -51,7 +51,7 @@ async function callOnce(opts: {
       headers: {
         Authorization: `Bearer ${opts.apiKey}`,
         "Content-Type": "application/json",
-        "X-Title": "Learning OS",
+        "X-Title": "My Study Compass",
       },
       body: JSON.stringify({
         model: opts.model,

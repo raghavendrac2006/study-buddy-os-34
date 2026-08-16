@@ -44,9 +44,9 @@ import { useSubjects, useCreateSubject } from "@/lib/db";
 export const Route = createFileRoute("/_authenticated/materials/$id")({
   head: () => ({
     meta: [
-      { title: "Material analysis — Learning OS" },
+      { title: "Material analysis — My Study Compass" },
       { name: "description", content: "Review and edit the structure AI found in your study material." },
-      { property: "og:title", content: "Material analysis — Learning OS" },
+      { property: "og:title", content: "Material analysis — My Study Compass" },
       { property: "og:description", content: "Units, chapters, topics and objectives from your own file." },
     ],
   }),

@@ -15,12 +15,12 @@ import { useCreateMaterial, useDeleteMaterial, useMaterials } from "@/lib/adapti
 export const Route = createFileRoute("/_authenticated/materials/")({
   head: () => ({
     meta: [
-      { title: "Study material — Learning OS" },
+      { title: "Study material — My Study Compass" },
       {
         name: "description",
         content: "Upload your own PDFs, docs, notes or CSVs and let AI turn them into a study structure.",
       },
-      { property: "og:title", content: "Study material — Learning OS" },
+      { property: "og:title", content: "Study material — My Study Compass" },
       { property: "og:description", content: "Upload material, get topics, get a plan." },
     ],
   }),

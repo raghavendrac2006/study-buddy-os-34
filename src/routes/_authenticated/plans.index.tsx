@@ -10,9 +10,9 @@ import { useActivities, usePlans } from "@/lib/adaptive-db";
 export const Route = createFileRoute("/_authenticated/plans/")({
   head: () => ({
     meta: [
-      { title: "Learning plans — Learning OS" },
+      { title: "Learning plans — My Study Compass" },
       { name: "description", content: "All your adaptive learning plans, deadlines and progress." },
-      { property: "og:title", content: "Learning plans — Learning OS" },
+      { property: "og:title", content: "Learning plans — My Study Compass" },
       { property: "og:description", content: "Adaptive plans built from your own study material." },
     ],
   }),

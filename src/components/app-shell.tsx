@@ -56,7 +56,7 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-border bg-sidebar px-3 py-5 md:flex">
         <div className="px-3 pb-6">
           <div className="text-sm font-semibold tracking-tight text-sidebar-foreground">
-            Learning OS
+            My Study Compass
           </div>
           <div className="text-xs text-muted-foreground">Personal study mentor</div>
         </div>
@@ -90,7 +90,7 @@ export function AppShell({ children, title }: { children: ReactNode; title?: str
 
       <div className="md:pl-60">
         <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/85 px-4 py-3 backdrop-blur md:px-8">
-          <h1 className="text-base font-semibold tracking-tight">{title ?? "Learning OS"}</h1>
+          <h1 className="text-base font-semibold tracking-tight">{title ?? "My Study Compass"}</h1>
           <div className="flex items-center gap-1 md:hidden">
             <ThemeToggle />
             <Button variant="ghost" size="sm" asChild>

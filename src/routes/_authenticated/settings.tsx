@@ -22,9 +22,9 @@ import { useProfile, useUpdateProfile } from "@/lib/db";
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — Learning OS" },
+      { title: "Settings — My Study Compass" },
       { name: "description", content: "Set your daily study target, session defaults, pomodoro lengths and theme." },
-      { property: "og:title", content: "Settings — Learning OS" },
+      { property: "og:title", content: "Settings — My Study Compass" },
       { property: "og:description", content: "Tune your study defaults and appearance." },
     ],
   }),

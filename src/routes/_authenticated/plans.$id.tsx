@@ -34,9 +34,9 @@ import { addDays, prioritiseForBudget, today, type SchedulableActivity } from "@
 export const Route = createFileRoute("/_authenticated/plans/$id")({
   head: () => ({
     meta: [
-      { title: "Plan detail — Learning OS" },
+      { title: "Plan detail — My Study Compass" },
       { name: "description", content: "Your day-by-day adaptive schedule with full manual control." },
-      { property: "og:title", content: "Plan detail — Learning OS" },
+      { property: "og:title", content: "Plan detail — My Study Compass" },
       { property: "og:description", content: "Move, lock, skip or reschedule any activity." },
     ],
   }),
