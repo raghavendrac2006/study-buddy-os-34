@@ -165,6 +165,8 @@ const TYPE_WEIGHT: Record<string, number> = {
   recall: 4,
   practice: 3.5,
   learn: 3,
+  watch: 3,
+  notes: 2.5,
 };
 
 export function activityScore(a: SchedulableActivity, onDate = today()): number {
