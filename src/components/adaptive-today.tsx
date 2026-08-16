@@ -172,7 +172,7 @@ export function AdaptiveToday() {
                     <Link
                       to="/workspace/$topicId"
                       params={{ topicId: a.topic_id }}
-                      search={{ activityId: a.id, planId: a.plan_id, tab: "source" }}
+                      search={{ activityId: a.id, planId: a.plan_id ?? undefined, tab: "source" }}
                     >
                       <PlayCircle className="size-4" /> Start learning
                     </Link>
@@ -255,6 +255,7 @@ export function AdaptiveToday() {
                 <Link
                   to="/workspace/$topicId"
                   params={{ topicId: m.topic_id }}
+                  search={{}}
                   className="min-w-0 flex-1 truncate text-sm hover:underline"
                 >
                   {titleOf(m.topic_id)}

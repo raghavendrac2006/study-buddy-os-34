@@ -24,10 +24,12 @@ import { useAssessments, useObjectives } from "@/lib/workspace-db";
 import { MASTERY_LABEL } from "@/lib/adaptive";
 
 export const Route = createFileRoute("/_authenticated/workspace/$topicId")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    activityId: typeof search["activityId"] === "string" ? (search["activityId"] as string) : undefined,
-    planId: typeof search["planId"] === "string" ? (search["planId"] as string) : undefined,
-    tab: typeof search["tab"] === "string" ? (search["tab"] as string) : undefined,
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { activityId?: string; planId?: string; tab?: string } => ({
+    ...(typeof search["activityId"] === "string" ? { activityId: search["activityId"] } : {}),
+    ...(typeof search["planId"] === "string" ? { planId: search["planId"] } : {}),
+    ...(typeof search["tab"] === "string" ? { tab: search["tab"] } : {}),
   }),
   head: () => ({
     meta: [
