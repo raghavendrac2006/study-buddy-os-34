@@ -25,9 +25,9 @@ import { MASTERY_LABEL } from "@/lib/adaptive";
 
 export const Route = createFileRoute("/_authenticated/workspace/$topicId")({
   validateSearch: (search: Record<string, unknown>) => ({
-    activityId: typeof search.activityId === "string" ? search.activityId : undefined,
-    planId: typeof search.planId === "string" ? search.planId : undefined,
-    tab: typeof search.tab === "string" ? search.tab : undefined,
+    activityId: typeof search["activityId"] === "string" ? (search["activityId"] as string) : undefined,
+    planId: typeof search["planId"] === "string" ? (search["planId"] as string) : undefined,
+    tab: typeof search["tab"] === "string" ? (search["tab"] as string) : undefined,
   }),
   head: () => ({
     meta: [
