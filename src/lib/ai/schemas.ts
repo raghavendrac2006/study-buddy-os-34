@@ -11,6 +11,9 @@ export const AnalysisTopicSchema = z.object({
   subtopics: z.array(z.string().max(160)).max(20).optional().default([]),
   difficulty: z.coerce.number().min(1).max(5).optional().default(3),
   estimated_minutes: z.coerce.number().min(5).max(600).optional().default(45),
+  source_page: z.coerce.number().min(1).optional().nullable().default(null),
+  start_seconds: z.coerce.number().min(0).optional().nullable().default(null),
+  end_seconds: z.coerce.number().min(0).optional().nullable().default(null),
 });
 
 export const AnalysisChapterSchema = z.object({
