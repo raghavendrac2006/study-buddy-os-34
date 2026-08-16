@@ -99,7 +99,7 @@ export function AssessmentPanel({
         try {
           const graded = await gradeShortAnswers({ data: { items: shorts } });
           for (const r of graded.results) {
-            out[r.index] = { correct: r.correct, feedback: r.feedback ?? "" };
+            out[r.index] = { correct: r.correct ?? false, feedback: r.feedback ?? "" };
           }
         } catch (err) {
           toast.error(`${friendlyAiError(err)} Short answers were left ungraded.`);
