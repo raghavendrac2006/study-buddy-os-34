@@ -38,7 +38,9 @@ export type AnalysisTopic = z.infer<typeof AnalysisTopicSchema>;
 
 export const PlanActivitySchema = z.object({
   topic_title: z.string().max(200).optional().default(""),
-  activity_type: z.enum(["learn", "recall", "practice", "assess", "revise"]).default("learn"),
+  activity_type: z
+    .enum(["watch", "notes", "learn", "recall", "practice", "assess", "revise"])
+    .default("learn"),
   title: z.string().min(1).max(200),
   description: z.string().max(400).optional().default(""),
   minutes: z.coerce.number().min(5).max(300).default(30),
