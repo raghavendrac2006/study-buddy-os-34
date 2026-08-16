@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { evaluateRecall, generateRecall } from "@/lib/ai.functions";
 import { friendlyAiError } from "@/lib/ai/errors";
 import { useRecordPerformance } from "@/lib/adaptive-db";
-import type { RecallEvaluation } from "@/lib/ai/schemas";
+type Evaluation = { score: number; verdict: string; missing: string[]; feedback: string };
 
 type Q = { question: string; expected_answer: string };
 
@@ -28,7 +28,7 @@ export function RecallPanel({
   const [questions, setQuestions] = useState<Q[]>([]);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [revealed, setRevealed] = useState<Record<number, boolean>>({});
-  const [evals, setEvals] = useState<Record<number, RecallEvaluation>>({});
+  const [evals, setEvals] = useState<Record<number, Evaluation>>({});
   const [loading, setLoading] = useState(false);
   const [busyIndex, setBusyIndex] = useState<number | null>(null);
 
@@ -44,7 +44,7 @@ export function RecallPanel({
           count: 3,
         },
       });
-      setQuestions(res.questions.map((q) => ({ question: q.question, expected_answer: q.expected_answer })));
+      setQuestions(res.questions.map((q) => ({ question: q.question, expected_answer: q.expected_answer ?? "" })));
       setAnswers({});
       setRevealed({});
       setEvals({});
@@ -68,7 +68,15 @@ export function RecallPanel({
           answer: answers[i]!.trim(),
         },
       });
-      setEvals((e) => ({ ...e, [i]: res }));
+      setEvals((e) => ({
+        ...e,
+        [i]: {
+          score: res.score,
+          verdict: res.verdict ?? "",
+          missing: res.missing ?? [],
+          feedback: res.feedback ?? "",
+        },
+      }));
       setRevealed((r) => ({ ...r, [i]: true }));
     } catch (err) {
       toast.error(friendlyAiError(err));
