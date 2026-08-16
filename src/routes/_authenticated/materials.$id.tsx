@@ -25,9 +25,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { analyzeMaterial, generatePlan } from "@/lib/ai.functions";
+import { analyzeCourse, analyzeMaterial, generateCoursePlan, generatePlan } from "@/lib/ai.functions";
 import { friendlyAiError } from "@/lib/ai/errors";
 import type { Analysis } from "@/lib/ai/schemas";
+import { useGoals, isoDay, weekStart } from "@/lib/workspace-db";
 import type { Json } from "@/integrations/supabase/types";
 import { feasibility, today } from "@/lib/adaptive";
 import {
@@ -88,17 +89,74 @@ function MaterialDetail() {
     };
   }, [id]);
 
+  const meta = (material.data?.metadata ?? {}) as {
+    chapters?: { title: string; start_seconds: number }[];
+    description?: string;
+    transcript_available?: boolean;
+    chapters_available?: boolean;
+    notes?: string[];
+  };
+  const isCourse = material.data?.source_type === "youtube";
+
+  /** Turns an AI course structure into the same tree shape the editor already renders. */
+  const analyseCourseSource = async () => {
+    const res = await analyzeCourse({
+      data: {
+        title: material.data!.title,
+        author: material.data!.author ?? "",
+        durationMinutes: Math.round((material.data!.duration_seconds ?? 0) / 60),
+        description: (meta.description ?? "").slice(0, 20_000),
+        chapters: (meta.chapters ?? []).slice(0, 400),
+        transcriptSample: (material.data!.extracted_text ?? "").slice(0, 120_000),
+      },
+    });
+    const analysis: Analysis = {
+      summary: res.course.summary ?? "",
+      subject_guess: res.course.subject_guess ?? "",
+      units: [
+        {
+          title: material.data!.title,
+          description: "Video course",
+          chapters: [
+            {
+              title: "Course sections",
+              description: "",
+              topics: res.course.sections.map((sec) => ({
+                title: sec.title,
+                description: sec.description ?? "",
+                key_concepts: sec.key_concepts ?? [],
+                prerequisites: sec.prerequisites ?? [],
+                objectives: sec.objectives ?? [],
+                subtopics: [],
+                difficulty: sec.difficulty ?? 3,
+                // watching time plus active learning time
+                estimated_minutes: Math.min(600, Math.max(5, Math.round((sec.video_minutes ?? 30) * 1.5))),
+                source_page: null,
+                start_seconds: sec.start_seconds ?? null,
+                end_seconds: sec.end_seconds ?? null,
+              })),
+            },
+          ],
+        },
+      ],
+    };
+    return { analysis, model: res.model };
+  };
+
   const runAnalysis = async () => {
-    if (!material.data?.extracted_text) return;
+    if (!material.data) return;
+    if (!isCourse && !material.data.extracted_text) return;
     setAnalysing(true);
     await updateMaterial.mutateAsync({ id, status: "analyzing", error_message: null });
     try {
-      const res = await analyzeMaterial({
-        data: {
-          text: material.data.extracted_text,
-          fileName: material.data.file_name,
-        },
-      });
+      const res = isCourse
+        ? await analyseCourseSource()
+        : await analyzeMaterial({
+            data: {
+              text: material.data.extracted_text ?? "",
+              fileName: material.data.file_name,
+            },
+          });
       const { data: userData } = await supabase.auth.getUser();
       await supabase.from("material_analyses").insert({
         user_id: userData.user!.id,
@@ -176,8 +234,17 @@ function MaterialDetail() {
               {material.data?.title ?? "Material"}
             </h2>
             <p className="text-sm text-muted-foreground">
-              {material.data ? `${Math.round(material.data.char_count / 1000)}k characters` : ""}
+              {material.data
+                ? isCourse
+                  ? `${Math.round((material.data.duration_seconds ?? 0) / 60)} min video · ${material.data.author ?? "YouTube"}`
+                  : `${Math.round(material.data.char_count / 1000)}k characters`
+                : ""}
             </p>
+            {isCourse && (meta.notes?.length ?? 0) > 0 && (
+              <p className="mt-1 max-w-xl text-xs text-muted-foreground">
+                {meta.notes!.join(" ")} You can still plan this course manually.
+              </p>
+            )}
           </div>
           <div className="flex gap-2">
             {!analysis && (
@@ -345,6 +412,9 @@ function MaterialDetail() {
                               subtopics: [],
                               difficulty: 3,
                               estimated_minutes: 30,
+                              source_page: null,
+                              start_seconds: null,
+                              end_seconds: null,
                             }),
                           )
                         }
@@ -382,6 +452,7 @@ function MaterialDetail() {
           estimated_minutes: t.estimated_minutes,
           prerequisites: t.prerequisites,
         }))}
+        isCourse={isCourse}
         onCreated={(planId) => navigate({ to: "/plans/$id", params: { id: planId } })}
         createPlan={createPlan}
         createActivities={createActivities}
@@ -405,6 +476,7 @@ function PlanDialog({
   subjectId,
   defaultTitle,
   topics,
+  isCourse,
   onCreated,
   createPlan,
   createActivities,
@@ -415,6 +487,7 @@ function PlanDialog({
   subjectId: string | null;
   defaultTitle: string;
   topics: PlanTopic[];
+  isCourse: boolean;
   onCreated: (planId: string) => void;
   createPlan: ReturnType<typeof useCreatePlan>;
   createActivities: ReturnType<typeof useCreateActivities>;
@@ -426,6 +499,11 @@ function PlanDialog({
   const [level, setLevel] = useState("beginner");
   const [priority, setPriority] = useState("medium");
   const [busy, setBusy] = useState(false);
+  const goals = useGoals({ from: weekStart(isoDay()) });
+  const manualGoals = (goals.data ?? [])
+    .filter((g) => g.source === "manual" && g.status !== "done")
+    .map((g) => `${g.title} (${g.period}, ${g.target_minutes} min)`)
+    .slice(0, 30);
 
   const totalMinutes = topics.reduce((a, t) => a + t.estimated_minutes, 0);
   const check = feasibility({
@@ -438,24 +516,45 @@ function PlanDialog({
   const submit = async () => {
     setBusy(true);
     try {
-      const res = await generatePlan({
-        data: {
-          goal,
-          startDate: today(),
-          targetDate: targetDate || null,
-          dailyMinutes,
-          preferredDays: days,
-          knowledgeLevel: level,
-          priority,
-          feasibilityNote: check.message,
-          topics: topics.map((t) => ({
-            title: t.title,
-            difficulty: t.difficulty,
-            estimated_minutes: t.estimated_minutes,
-            prerequisites: t.prerequisites,
-          })),
-        },
-      });
+      const res = isCourse
+        ? await generateCoursePlan({
+            data: {
+              goal,
+              startDate: today(),
+              targetDate: targetDate || null,
+              dailyMinutes,
+              preferredDays: days,
+              knowledgeLevel: level,
+              priority,
+              feasibilityNote: check.message,
+              manualGoals,
+              sections: topics.map((t) => ({
+                title: t.title,
+                // the stored estimate includes active learning; recover watch time
+                video_minutes: Math.max(1, Math.round(t.estimated_minutes / 1.5)),
+                difficulty: t.difficulty,
+                prerequisites: t.prerequisites,
+              })),
+            },
+          })
+        : await generatePlan({
+            data: {
+              goal,
+              startDate: today(),
+              targetDate: targetDate || null,
+              dailyMinutes,
+              preferredDays: days,
+              knowledgeLevel: level,
+              priority,
+              feasibilityNote: check.message,
+              topics: topics.map((t) => ({
+                title: t.title,
+                difficulty: t.difficulty,
+                estimated_minutes: t.estimated_minutes,
+                prerequisites: t.prerequisites,
+              })),
+            },
+          });
 
       const plan = await createPlan.mutateAsync({
         subject_id: subjectId,
@@ -507,7 +606,10 @@ function PlanDialog({
       <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Create your learning plan</DialogTitle>
-          <DialogDescription>{topics.length} topics from this material.</DialogDescription>
+          <DialogDescription>
+            {topics.length} {isCourse ? "course sections" : "topics"} from this source.
+            {manualGoals.length > 0 && " Your manual goals are sent to the planner."}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
