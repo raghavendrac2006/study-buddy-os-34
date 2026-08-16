@@ -17,9 +17,9 @@ import { MASTERY_LABEL, today, type MasteryState } from "@/lib/adaptive";
 export const Route = createFileRoute("/_authenticated/mastery")({
   head: () => ({
     meta: [
-      { title: "Mastery & revision — Learning OS" },
+      { title: "Mastery & revision — My Study Compass" },
       { name: "description", content: "Topic mastery, spaced revision schedule and learning history." },
-      { property: "og:title", content: "Mastery & revision — Learning OS" },
+      { property: "og:title", content: "Mastery & revision — My Study Compass" },
       { property: "og:description", content: "See what's strong, what's weak and what's due." },
     ],
   }),

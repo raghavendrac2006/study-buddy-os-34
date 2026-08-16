@@ -1,7 +1,15 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { CheckCircle2, Lightbulb, Loader2, RotateCcw, Sparkles, TriangleAlert } from "lucide-react";
+import {
+  CheckCircle2,
+  Lightbulb,
+  Loader2,
+  PlayCircle,
+  RotateCcw,
+  Sparkles,
+  TriangleAlert,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -25,6 +33,8 @@ const TYPE_LABEL: Record<string, string> = {
   practice: "Practice",
   assess: "Assess",
   revise: "Revise",
+  watch: "Watch",
+  notes: "Notes",
 };
 
 export function AdaptiveToday() {
@@ -157,6 +167,17 @@ export function AdaptiveToday() {
                     {a.scheduled_date < day && " · moved from an earlier day"}
                   </p>
                 </div>
+                {a.topic_id && (
+                  <Button size="sm" variant="outline" asChild>
+                    <Link
+                      to="/workspace/$topicId"
+                      params={{ topicId: a.topic_id }}
+                      search={{ activityId: a.id, planId: a.plan_id ?? undefined, tab: "source" }}
+                    >
+                      <PlayCircle className="size-4" /> Start learning
+                    </Link>
+                  </Button>
+                )}
                 <Button
                   size="sm"
                   onClick={() =>
@@ -193,6 +214,11 @@ export function AdaptiveToday() {
                     every {r.interval_days}d · {r.reason}
                   </p>
                 </div>
+                <Button size="sm" variant="ghost" asChild>
+                  <Link to="/workspace/$topicId" params={{ topicId: r.topic_id }} search={{ tab: "recall" }}>
+                    Open
+                  </Link>
+                </Button>
                 <Button
                   size="sm"
                   variant="outline"
@@ -226,7 +252,14 @@ export function AdaptiveToday() {
             {weak.map((m) => (
               <li key={m.id} className="surface flex items-center gap-3 p-4">
                 <TriangleAlert className="size-4 shrink-0 text-destructive" />
-                <span className="min-w-0 flex-1 truncate text-sm">{titleOf(m.topic_id)}</span>
+                <Link
+                  to="/workspace/$topicId"
+                  params={{ topicId: m.topic_id }}
+                  search={{}}
+                  className="min-w-0 flex-1 truncate text-sm hover:underline"
+                >
+                  {titleOf(m.topic_id)}
+                </Link>
                 <Badge variant="secondary">
                   {Math.round(Number(m.mastery))}% · {MASTERY_LABEL[m.state as MasteryState]}
                 </Badge>

@@ -178,6 +178,9 @@ export function useSaveAnalysisTree() {
                   prerequisites: t.prerequisites ?? [],
                   difficulty: Math.round(t.difficulty ?? 3),
                   estimated_minutes: Math.round(t.estimated_minutes ?? 45),
+                  source_page: t.source_page ?? null,
+                  start_seconds: t.start_seconds ?? null,
+                  end_seconds: t.end_seconds ?? null,
                   sort_order: order++,
                 })),
               )

@@ -32,9 +32,9 @@ import { minutesLabel, todayISO, todaysPlan } from "@/lib/scheduling";
 export const Route = createFileRoute("/_authenticated/study")({
   head: () => ({
     meta: [
-      { title: "Study session — Learning OS" },
+      { title: "Study session — My Study Compass" },
       { name: "description", content: "Run a focused study session with a countdown timer, objectives and a post-session reflection." },
-      { property: "og:title", content: "Study session — Learning OS" },
+      { property: "og:title", content: "Study session — My Study Compass" },
       { property: "og:description", content: "Timer, objectives, notes and reflection in one screen." },
     ],
   }),

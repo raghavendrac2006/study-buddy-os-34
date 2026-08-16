@@ -2,7 +2,15 @@
  * Centralised model configuration.
  * Change models here only — never hard-code a model name anywhere else.
  */
-export type AiTask = "material_analysis" | "plan_generation" | "daily_adaptation" | "reflection";
+export type AiTask =
+  | "material_analysis"
+  | "plan_generation"
+  | "course_plan"
+  | "daily_adaptation"
+  | "reflection"
+  | "recall"
+  | "assessment"
+  | "assistant";
 
 type TaskConfig = {
   /** Primary model id sent to OpenRouter. */
@@ -65,6 +73,38 @@ export const MODEL_CONFIG: Record<AiTask, TaskConfig> = {
     fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
     temperature: 0.2,
     maxTokens: 1200,
+    timeoutMs: 60_000,
+    reasoning: false,
+  },
+  course_plan: {
+    model: "openrouter/free",
+    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
+    temperature: 0.3,
+    maxTokens: 8000,
+    timeoutMs: 120_000,
+    reasoning: false,
+  },
+  recall: {
+    model: "openrouter/free",
+    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
+    temperature: 0.3,
+    maxTokens: 2000,
+    timeoutMs: 60_000,
+    reasoning: false,
+  },
+  assessment: {
+    model: "openrouter/free",
+    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
+    temperature: 0.3,
+    maxTokens: 4000,
+    timeoutMs: 90_000,
+    reasoning: false,
+  },
+  assistant: {
+    model: "openrouter/free",
+    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
+    temperature: 0.4,
+    maxTokens: 1600,
     timeoutMs: 60_000,
     reasoning: false,
   },

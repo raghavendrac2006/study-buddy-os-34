@@ -78,6 +78,95 @@ export type Database = {
           },
         ]
       }
+      goals: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          detail: string | null
+          goal_date: string
+          id: string
+          material_id: string | null
+          period: string
+          plan_id: string | null
+          sort_order: number
+          source: string
+          status: string
+          subject_id: string | null
+          target_minutes: number
+          title: string
+          topic_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          detail?: string | null
+          goal_date: string
+          id?: string
+          material_id?: string | null
+          period?: string
+          plan_id?: string | null
+          sort_order?: number
+          source?: string
+          status?: string
+          subject_id?: string | null
+          target_minutes?: number
+          title: string
+          topic_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          detail?: string | null
+          goal_date?: string
+          id?: string
+          material_id?: string | null
+          period?: string
+          plan_id?: string | null
+          sort_order?: number
+          source?: string
+          status?: string
+          subject_id?: string | null
+          target_minutes?: number
+          title?: string
+          topic_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goals_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "goals_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "learning_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "goals_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "goals_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       learning_days: {
         Row: {
           completed_at: string | null
@@ -316,14 +405,22 @@ export type Database = {
       }
       materials: {
         Row: {
+          author: string | null
+          bookmarks: Json
           char_count: number
           created_at: string
+          duration_seconds: number
           error_message: string | null
           extracted_text: string | null
           file_name: string
           id: string
+          last_page: number
+          last_position_seconds: number
+          metadata: Json
           mime_type: string
           size_bytes: number
+          source_type: string
+          source_url: string | null
           status: string
           storage_path: string | null
           subject_id: string | null
@@ -332,14 +429,22 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          author?: string | null
+          bookmarks?: Json
           char_count?: number
           created_at?: string
+          duration_seconds?: number
           error_message?: string | null
           extracted_text?: string | null
           file_name: string
           id?: string
+          last_page?: number
+          last_position_seconds?: number
+          metadata?: Json
           mime_type?: string
           size_bytes?: number
+          source_type?: string
+          source_url?: string | null
           status?: string
           storage_path?: string | null
           subject_id?: string | null
@@ -348,14 +453,22 @@ export type Database = {
           user_id: string
         }
         Update: {
+          author?: string | null
+          bookmarks?: Json
           char_count?: number
           created_at?: string
+          duration_seconds?: number
           error_message?: string | null
           extracted_text?: string | null
           file_name?: string
           id?: string
+          last_page?: number
+          last_position_seconds?: number
+          metadata?: Json
           mime_type?: string
           size_bytes?: number
+          source_type?: string
+          source_url?: string | null
           status?: string
           storage_path?: string | null
           subject_id?: string | null
@@ -369,6 +482,67 @@ export type Database = {
             columns: ["subject_id"]
             isOneToOne: false
             referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notes: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          material_id: string | null
+          page: number | null
+          subject_id: string | null
+          timestamp_seconds: number | null
+          topic_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          material_id?: string | null
+          page?: number | null
+          subject_id?: string | null
+          timestamp_seconds?: number | null
+          topic_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          material_id?: string | null
+          page?: number | null
+          subject_id?: string | null
+          timestamp_seconds?: number | null
+          topic_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notes_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notes_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notes_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
             referencedColumns: ["id"]
           },
         ]
@@ -907,6 +1081,7 @@ export type Database = {
           created_at: string
           description: string | null
           difficulty: number
+          end_seconds: number | null
           estimated_minutes: number
           id: string
           key_concepts: string[]
@@ -915,6 +1090,8 @@ export type Database = {
           parent_id: string | null
           prerequisites: string[]
           sort_order: number
+          source_page: number | null
+          start_seconds: number | null
           subject_id: string | null
           title: string
           updated_at: string
@@ -924,6 +1101,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           difficulty?: number
+          end_seconds?: number | null
           estimated_minutes?: number
           id?: string
           key_concepts?: string[]
@@ -932,6 +1110,8 @@ export type Database = {
           parent_id?: string | null
           prerequisites?: string[]
           sort_order?: number
+          source_page?: number | null
+          start_seconds?: number | null
           subject_id?: string | null
           title: string
           updated_at?: string
@@ -941,6 +1121,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           difficulty?: number
+          end_seconds?: number | null
           estimated_minutes?: number
           id?: string
           key_concepts?: string[]
@@ -949,6 +1130,8 @@ export type Database = {
           parent_id?: string | null
           prerequisites?: string[]
           sort_order?: number
+          source_page?: number | null
+          start_seconds?: number | null
           subject_id?: string | null
           title?: string
           updated_at?: string

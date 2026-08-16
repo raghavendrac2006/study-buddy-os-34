@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Learning OS design system.
+ * My Study Compass design system.
  * Ink + paper base, a single deep-teal signal colour, warm amber for streaks.
  * All colours are oklch semantic tokens. Never hardcode colours in components.
  */

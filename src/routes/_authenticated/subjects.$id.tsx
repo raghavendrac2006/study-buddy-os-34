@@ -23,9 +23,9 @@ import { isoAddDays, minutesLabel, todayISO } from "@/lib/scheduling";
 export const Route = createFileRoute("/_authenticated/subjects/$id")({
   head: () => ({
     meta: [
-      { title: "Subject plan — Learning OS" },
+      { title: "Subject plan — My Study Compass" },
       { name: "description", content: "Day-wise curriculum for this subject: topics, subtopics and durations." },
-      { property: "og:title", content: "Subject plan — Learning OS" },
+      { property: "og:title", content: "Subject plan — My Study Compass" },
       { property: "og:description", content: "Define exactly what to study on each day." },
     ],
   }),

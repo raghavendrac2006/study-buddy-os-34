@@ -22,9 +22,9 @@ import { todayISO } from "@/lib/scheduling";
 export const Route = createFileRoute("/_authenticated/tasks")({
   head: () => ({
     meta: [
-      { title: "Tasks — Learning OS" },
+      { title: "Tasks — My Study Compass" },
       { name: "description", content: "Capture study tasks, set priorities and due dates, and clear them one by one." },
-      { property: "og:title", content: "Tasks — Learning OS" },
+      { property: "og:title", content: "Tasks — My Study Compass" },
       { property: "og:description", content: "A simple task list wired into your study plan." },
     ],
   }),

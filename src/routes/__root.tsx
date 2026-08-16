@@ -80,13 +80,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#0f1720" },
-      { title: "Learning OS — Personal Study Mentor" },
+      { title: "My Study Compass — Personal Study Mentor" },
       {
         name: "description",
         content:
           "A personal learning operating system: daily study missions, subject plans, focus timer and task tracking.",
       },
-      { property: "og:title", content: "Learning OS — Personal Study Mentor" },
+      { property: "og:title", content: "My Study Compass — Personal Study Mentor" },
       {
         property: "og:description",
         content: "Know exactly what to study today, every day.",
