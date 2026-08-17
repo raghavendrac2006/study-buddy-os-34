@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowDown, ArrowUp, Check, Plus, Trash2, TriangleAlert } from "lucide-react";
+import { ArrowDown, ArrowUp, CalendarClock, Check, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
   useDeleteGoal,
   useGoals,
   useUpdateGoal,
+  addDays,
   isoDay,
   weekStart,
   type Goal,
@@ -120,6 +121,23 @@ export function GoalsPanel({
           </Button>
           <Button size="icon" variant="ghost" aria-label="Move down" onClick={() => void move(list, i, 1)}>
             <ArrowDown className="size-3.5" />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            aria-label="Postpone goal"
+            title={g.period === "daily" ? "Move to tomorrow" : "Move to next week"}
+            onClick={() => {
+              update.mutate({
+                id: g.id,
+                goal_date: addDays(g.goal_date, g.period === "daily" ? 1 : 7),
+                status: "pending",
+                completed_at: null,
+              });
+              toast.success(g.period === "daily" ? "Moved to tomorrow" : "Moved to next week");
+            }}
+          >
+            <CalendarClock className="size-3.5" />
           </Button>
           <Button size="icon" variant="ghost" aria-label="Delete goal" onClick={() => remove.mutate(g.id)}>
             <Trash2 className="size-3.5" />

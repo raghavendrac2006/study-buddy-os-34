@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Plus, Sparkles, Trash2, Wand2 } from "lucide-react";
+import { ListPlus, Loader2, Plus, Sparkles, Trash2, Wand2 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -143,6 +143,60 @@ function MaterialDetail() {
     return { analysis, model: res.model };
   };
 
+  /** Fallback when no transcript/chapters can be analysed: build an editable skeleton. */
+  const buildManualStructure = () => {
+    const duration = material.data?.duration_seconds ?? 0;
+    const chapters = meta.chapters ?? [];
+    const sections = chapters.length
+      ? chapters.map((c, i) => {
+          const end = chapters[i + 1]?.start_seconds ?? duration;
+          const videoMinutes = Math.max(5, Math.round((end - c.start_seconds) / 60));
+          return {
+            title: c.title,
+            start_seconds: c.start_seconds,
+            end_seconds: end || null,
+            minutes: Math.min(600, Math.round(videoMinutes * 1.5)),
+          };
+        })
+      : Array.from({ length: Math.max(1, Math.ceil(duration / 3600)) }, (_, i) => ({
+          title: `Section ${i + 1}`,
+          start_seconds: i * 3600,
+          end_seconds: Math.min(duration, (i + 1) * 3600) || null,
+          minutes: 90,
+        }));
+
+    setAnalysis({
+      summary: "Manually entered course structure — edit the sections below.",
+      subject_guess: material.data?.title ?? "",
+      units: [
+        {
+          title: material.data?.title ?? "Course",
+          description: "Video course",
+          chapters: [
+            {
+              title: "Course sections",
+              description: "",
+              topics: sections.map((s) => ({
+                title: s.title,
+                description: "",
+                key_concepts: [],
+                prerequisites: [],
+                objectives: [],
+                subtopics: [],
+                difficulty: 3,
+                estimated_minutes: s.minutes,
+                source_page: null,
+                start_seconds: s.start_seconds,
+                end_seconds: s.end_seconds,
+              })),
+            },
+          ],
+        },
+      ],
+    });
+    toast.message("Structure created from the course timeline. Edit it, then save.");
+  };
+
   const runAnalysis = async () => {
     if (!material.data) return;
     if (!isCourse && !material.data.extracted_text) return;
@@ -247,6 +301,11 @@ function MaterialDetail() {
             )}
           </div>
           <div className="flex gap-2">
+            {!analysis && isCourse && (
+              <Button variant="outline" onClick={buildManualStructure} disabled={!material.data}>
+                <ListPlus className="size-4" /> Enter structure manually
+              </Button>
+            )}
             {!analysis && (
               <Button onClick={runAnalysis} disabled={analysing || !material.data}>
                 {analysing ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
