@@ -427,6 +427,7 @@ export type Database = {
           title: string
           updated_at: string
           user_id: string
+          watched_seconds: number
         }
         Insert: {
           author?: string | null
@@ -451,6 +452,7 @@ export type Database = {
           title: string
           updated_at?: string
           user_id: string
+          watched_seconds?: number
         }
         Update: {
           author?: string | null
@@ -475,6 +477,7 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
+          watched_seconds?: number
         }
         Relationships: [
           {
