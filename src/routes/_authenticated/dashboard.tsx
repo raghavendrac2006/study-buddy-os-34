@@ -142,6 +142,8 @@ function Dashboard() {
 
         <AdaptiveToday />
 
+        <DailyPracticeCard today={today} />
+
         <GoalsPanel plannedMinutes={planMinutes} dailyBudget={target} />
 
         {/* Today's Mission */}
