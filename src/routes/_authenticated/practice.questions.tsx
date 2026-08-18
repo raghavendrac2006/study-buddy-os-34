@@ -27,10 +27,9 @@ import {
 } from "@/components/ui/select";
 import {
   useQuestions,
-  useCreateQuestion,
+  useCreateQuestions,
   useUpdateQuestion,
   useDeleteQuestion,
-  useImportQuestions,
   type PracticeQuestion,
 } from "@/lib/practice-db";
 import { CSV_COLUMNS, DIFFICULTIES, csvToQuestions, questionsToCsv } from "@/lib/practice";
@@ -53,7 +52,7 @@ export const Route = createFileRoute("/_authenticated/practice/questions")({
 });
 
 type Draft = {
-  id?: string;
+  id?: string | undefined;
   category: string;
   topic: string;
   difficulty: string;
@@ -79,10 +78,10 @@ const emptyDraft = (): Draft => ({
 
 function QuestionBank() {
   const questions = useQuestions();
-  const createQ = useCreateQuestion();
+  const createQ = useCreateQuestions();
   const updateQ = useUpdateQuestion();
   const deleteQ = useDeleteQuestion();
-  const importQ = useImportQuestions();
+  const importQ = useCreateQuestions();
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
@@ -134,9 +133,18 @@ function QuestionBank() {
   async function save() {
     if (!draft) return;
     const options = draft.options.map((o) => o.trim()).filter(Boolean);
-    if (!draft.question.trim()) return toast.error("Question text is required.");
-    if (options.length < 2) return toast.error("At least two options are required.");
-    if (draft.correct_index >= options.length) return toast.error("Pick a valid correct answer.");
+    if (!draft.question.trim()) {
+      toast.error("Question text is required.");
+      return;
+    }
+    if (options.length < 2) {
+      toast.error("At least two options are required.");
+      return;
+    }
+    if (draft.correct_index >= options.length) {
+      toast.error("Pick a valid correct answer.");
+      return;
+    }
 
     const payload = {
       category: draft.category,
@@ -152,7 +160,7 @@ function QuestionBank() {
 
     try {
       if (draft.id) await updateQ.mutateAsync({ id: draft.id, ...payload });
-      else await createQ.mutateAsync(payload);
+      else await createQ.mutateAsync([payload]);
       setDraft(null);
       toast.success("Question saved");
     } catch (e) {
