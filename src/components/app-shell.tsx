@@ -6,6 +6,7 @@ import {
   Brain,
   Timer,
   CheckSquare,
+  Dumbbell,
   CalendarDays,
   History,
   Moon,
@@ -24,7 +25,8 @@ const NAV = [
   { to: "/calendar", label: "Calendar", icon: CalendarDays, primary: true },
   { to: "/mastery", label: "Mastery", icon: Brain, primary: false },
   { to: "/study", label: "Study", icon: Timer, primary: true },
-  { to: "/history", label: "History", icon: History, primary: true },
+  { to: "/practice", label: "Practice", icon: Dumbbell, primary: true },
+  { to: "/history", label: "History", icon: History, primary: false },
   { to: "/tasks", label: "Tasks", icon: CheckSquare, primary: false },
 ] as const;
 
