@@ -143,7 +143,7 @@ export function useSavePracticeRun() {
           })
           .select("*")
           .single(),
-      );
+      )!;
 
       if (input.attempts.length) {
         const { error } = await supabase.from("practice_attempts").insert(
