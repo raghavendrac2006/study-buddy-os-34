@@ -23,6 +23,7 @@ import { Route as AuthenticatedMaterialsIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedMaterialsIdRouteImport } from './routes/_authenticated/materials.$id'
 import { Route as AuthenticatedPlansIndexRouteImport } from './routes/_authenticated/plans.index'
 import { Route as AuthenticatedPlansIdRouteImport } from './routes/_authenticated/plans.$id'
+import { Route as AuthenticatedPracticeIndexRouteImport } from './routes/_authenticated/practice.index'
 import { Route as AuthenticatedSubjectsIndexRouteImport } from './routes/_authenticated/subjects.index'
 import { Route as AuthenticatedSubjectsIdRouteImport } from './routes/_authenticated/subjects.$id'
 import { Route as AuthenticatedWorkspaceTopicIdRouteImport } from './routes/_authenticated/workspace.$topicId'
@@ -98,6 +99,12 @@ const AuthenticatedPlansIdRoute = AuthenticatedPlansIdRouteImport.update({
   path: '/plans/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPracticeIndexRoute =
+  AuthenticatedPracticeIndexRouteImport.update({
+    id: '/practice/',
+    path: '/practice/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSubjectsIndexRoute =
   AuthenticatedSubjectsIndexRouteImport.update({
     id: '/subjects/',
@@ -132,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/workspace/$topicId': typeof AuthenticatedWorkspaceTopicIdRoute
   '/materials/': typeof AuthenticatedMaterialsIndexRoute
   '/plans/': typeof AuthenticatedPlansIndexRoute
+  '/practice/': typeof AuthenticatedPracticeIndexRoute
   '/subjects/': typeof AuthenticatedSubjectsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -150,6 +158,7 @@ export interface FileRoutesByTo {
   '/workspace/$topicId': typeof AuthenticatedWorkspaceTopicIdRoute
   '/materials': typeof AuthenticatedMaterialsIndexRoute
   '/plans': typeof AuthenticatedPlansIndexRoute
+  '/practice': typeof AuthenticatedPracticeIndexRoute
   '/subjects': typeof AuthenticatedSubjectsIndexRoute
 }
 export interface FileRoutesById {
@@ -170,6 +179,7 @@ export interface FileRoutesById {
   '/_authenticated/workspace/$topicId': typeof AuthenticatedWorkspaceTopicIdRoute
   '/_authenticated/materials/': typeof AuthenticatedMaterialsIndexRoute
   '/_authenticated/plans/': typeof AuthenticatedPlansIndexRoute
+  '/_authenticated/practice/': typeof AuthenticatedPracticeIndexRoute
   '/_authenticated/subjects/': typeof AuthenticatedSubjectsIndexRoute
 }
 export interface FileRouteTypes {
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/workspace/$topicId'
     | '/materials/'
     | '/plans/'
+    | '/practice/'
     | '/subjects/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -208,6 +219,7 @@ export interface FileRouteTypes {
     | '/workspace/$topicId'
     | '/materials'
     | '/plans'
+    | '/practice'
     | '/subjects'
   id:
     | '__root__'
@@ -227,6 +239,7 @@ export interface FileRouteTypes {
     | '/_authenticated/workspace/$topicId'
     | '/_authenticated/materials/'
     | '/_authenticated/plans/'
+    | '/_authenticated/practice/'
     | '/_authenticated/subjects/'
   fileRoutesById: FileRoutesById
 }
@@ -335,6 +348,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPlansIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/practice/': {
+      id: '/_authenticated/practice/'
+      path: '/practice'
+      fullPath: '/practice/'
+      preLoaderRoute: typeof AuthenticatedPracticeIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/subjects/': {
       id: '/_authenticated/subjects/'
       path: '/subjects'
@@ -374,6 +394,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedWorkspaceTopicIdRoute: typeof AuthenticatedWorkspaceTopicIdRoute
   AuthenticatedMaterialsIndexRoute: typeof AuthenticatedMaterialsIndexRoute
   AuthenticatedPlansIndexRoute: typeof AuthenticatedPlansIndexRoute
+  AuthenticatedPracticeIndexRoute: typeof AuthenticatedPracticeIndexRoute
   AuthenticatedSubjectsIndexRoute: typeof AuthenticatedSubjectsIndexRoute
 }
 
@@ -392,6 +413,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedWorkspaceTopicIdRoute: AuthenticatedWorkspaceTopicIdRoute,
   AuthenticatedMaterialsIndexRoute: AuthenticatedMaterialsIndexRoute,
   AuthenticatedPlansIndexRoute: AuthenticatedPlansIndexRoute,
+  AuthenticatedPracticeIndexRoute: AuthenticatedPracticeIndexRoute,
   AuthenticatedSubjectsIndexRoute: AuthenticatedSubjectsIndexRoute,
 }
 
