@@ -161,7 +161,7 @@ export function csvToQuestions(text: string): { rows: ParsedQuestion[]; errors: 
   const errors: string[] = [];
   if (parsed.length < 2) return { rows: [], errors: ["CSV has no data rows."] };
 
-  const header = parsed[0].map((h) => h.trim().toLowerCase());
+  const header = (parsed[0] ?? []).map((h) => h.trim().toLowerCase());
   const idx = (name: string) => header.indexOf(name);
   const missing = ["question", "option_a", "option_b", "correct_option"].filter(
     (c) => idx(c) === -1,
