@@ -78,6 +78,75 @@ export type Database = {
           },
         ]
       }
+      coding_problems: {
+        Row: {
+          approach: string | null
+          attempts: number
+          category: string
+          created_at: string
+          difficulties: string | null
+          difficulty: string
+          id: string
+          language: string | null
+          learned: string | null
+          minutes_taken: number
+          name: string
+          needs_revision: boolean
+          platform: string
+          result: string
+          revision_due_date: string | null
+          solved_on: string
+          topic: string
+          updated_at: string
+          url: string | null
+          user_id: string
+        }
+        Insert: {
+          approach?: string | null
+          attempts?: number
+          category?: string
+          created_at?: string
+          difficulties?: string | null
+          difficulty?: string
+          id?: string
+          language?: string | null
+          learned?: string | null
+          minutes_taken?: number
+          name: string
+          needs_revision?: boolean
+          platform?: string
+          result?: string
+          revision_due_date?: string | null
+          solved_on?: string
+          topic?: string
+          updated_at?: string
+          url?: string | null
+          user_id: string
+        }
+        Update: {
+          approach?: string | null
+          attempts?: number
+          category?: string
+          created_at?: string
+          difficulties?: string | null
+          difficulty?: string
+          id?: string
+          language?: string | null
+          learned?: string | null
+          minutes_taken?: number
+          name?: string
+          needs_revision?: boolean
+          platform?: string
+          result?: string
+          revision_due_date?: string | null
+          solved_on?: string
+          topic?: string
+          updated_at?: string
+          url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       goals: {
         Row: {
           completed_at: string | null
@@ -742,6 +811,162 @@ export type Database = {
           },
         ]
       }
+      practice_attempts: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          is_correct: boolean
+          question_id: string | null
+          seconds_taken: number
+          selected_index: number | null
+          session_id: string | null
+          topic: string | null
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          question_id?: string | null
+          seconds_taken?: number
+          selected_index?: number | null
+          session_id?: string | null
+          topic?: string | null
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          question_id?: string | null
+          seconds_taken?: number
+          selected_index?: number | null
+          session_id?: string | null
+          topic?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "practice_attempts_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "practice_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "practice_attempts_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "practice_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      practice_questions: {
+        Row: {
+          archived: boolean
+          category: string
+          correct_index: number
+          created_at: string
+          difficulty: string
+          estimated_seconds: number
+          explanation: string | null
+          id: string
+          last_attempted_at: string | null
+          options: string[]
+          question: string
+          source: string | null
+          times_attempted: number
+          times_correct: number
+          topic: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          archived?: boolean
+          category?: string
+          correct_index?: number
+          created_at?: string
+          difficulty?: string
+          estimated_seconds?: number
+          explanation?: string | null
+          id?: string
+          last_attempted_at?: string | null
+          options?: string[]
+          question: string
+          source?: string | null
+          times_attempted?: number
+          times_correct?: number
+          topic?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          archived?: boolean
+          category?: string
+          correct_index?: number
+          created_at?: string
+          difficulty?: string
+          estimated_seconds?: number
+          explanation?: string | null
+          id?: string
+          last_attempted_at?: string | null
+          options?: string[]
+          question?: string
+          source?: string | null
+          times_attempted?: number
+          times_correct?: number
+          topic?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      practice_sessions: {
+        Row: {
+          completed_at: string | null
+          correct_count: number
+          created_at: string
+          duration_seconds: number
+          id: string
+          mode: string
+          practiced_on: string
+          question_count: number
+          target_minutes: number
+          topics: Json
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          correct_count?: number
+          created_at?: string
+          duration_seconds?: number
+          id?: string
+          mode?: string
+          practiced_on?: string
+          question_count?: number
+          target_minutes?: number
+          topics?: Json
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          correct_count?: number
+          created_at?: string
+          duration_seconds?: number
+          id?: string
+          mode?: string
+          practiced_on?: string
+          question_count?: number
+          target_minutes?: number
+          topics?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -755,6 +980,10 @@ export type Database = {
           onboarded: boolean
           pomodoro_break_minutes: number
           pomodoro_focus_minutes: number
+          practice_difficulty: string
+          practice_mode: string
+          practice_questions_per_day: number
+          practice_target_minutes: number
           preferred_study_time: string | null
           updated_at: string
         }
@@ -770,6 +999,10 @@ export type Database = {
           onboarded?: boolean
           pomodoro_break_minutes?: number
           pomodoro_focus_minutes?: number
+          practice_difficulty?: string
+          practice_mode?: string
+          practice_questions_per_day?: number
+          practice_target_minutes?: number
           preferred_study_time?: string | null
           updated_at?: string
         }
@@ -785,6 +1018,10 @@ export type Database = {
           onboarded?: boolean
           pomodoro_break_minutes?: number
           pomodoro_focus_minutes?: number
+          practice_difficulty?: string
+          practice_mode?: string
+          practice_questions_per_day?: number
+          practice_target_minutes?: number
           preferred_study_time?: string | null
           updated_at?: string
         }
