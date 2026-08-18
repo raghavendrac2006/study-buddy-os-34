@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef } from "react";
 import {
   ArrowRight,
+  Dumbbell,
   BookOpen,
   CheckCircle2,
   Clock,
@@ -40,6 +41,7 @@ import {
   todaysPlan,
   upcomingPlan,
 } from "@/lib/scheduling";
+import { usePracticeSessions } from "@/lib/practice-db";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -400,5 +402,32 @@ function StatCard({
       <p className="text-xs font-medium">{label}</p>
       <p className="text-[11px] text-muted-foreground">{hint}</p>
     </div>
+  );
+}
+
+function DailyPracticeCard({ today }: { today: string }) {
+  const sessions = usePracticeSessions(10);
+  const profile = useProfile();
+  const doneToday = (sessions.data ?? []).filter((s) => s.practiced_on === today);
+  const solved = doneToday.reduce((a, s) => a + s.question_count, 0);
+  const correct = doneToday.reduce((a, s) => a + s.correct_count, 0);
+  const count = profile.data?.practice_questions_per_day ?? 5;
+  const minutes = profile.data?.practice_target_minutes ?? 12;
+
+  return (
+    <section className="surface flex flex-wrap items-center gap-3 p-4">
+      <Dumbbell className="size-4 shrink-0 text-primary" />
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-medium">Daily practice</p>
+        <p className="text-xs text-muted-foreground">
+          {doneToday.length > 0
+            ? `Done today · ${correct}/${solved} correct`
+            : `${count} questions · ~${minutes} min · optional`}
+        </p>
+      </div>
+      <Button size="sm" variant={doneToday.length > 0 ? "outline" : "default"} asChild>
+        <Link to="/practice">{doneToday.length > 0 ? "Practice again" : "Start"}</Link>
+      </Button>
+    </section>
   );
 }
