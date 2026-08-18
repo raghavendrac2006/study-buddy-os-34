@@ -24,6 +24,7 @@ import { Route as AuthenticatedMaterialsIdRouteImport } from './routes/_authenti
 import { Route as AuthenticatedPlansIndexRouteImport } from './routes/_authenticated/plans.index'
 import { Route as AuthenticatedPlansIdRouteImport } from './routes/_authenticated/plans.$id'
 import { Route as AuthenticatedPracticeIndexRouteImport } from './routes/_authenticated/practice.index'
+import { Route as AuthenticatedPracticeQuestionsRouteImport } from './routes/_authenticated/practice.questions'
 import { Route as AuthenticatedSubjectsIndexRouteImport } from './routes/_authenticated/subjects.index'
 import { Route as AuthenticatedSubjectsIdRouteImport } from './routes/_authenticated/subjects.$id'
 import { Route as AuthenticatedWorkspaceTopicIdRouteImport } from './routes/_authenticated/workspace.$topicId'
@@ -105,6 +106,12 @@ const AuthenticatedPracticeIndexRoute =
     path: '/practice/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPracticeQuestionsRoute =
+  AuthenticatedPracticeQuestionsRouteImport.update({
+    id: '/practice/questions',
+    path: '/practice/questions',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSubjectsIndexRoute =
   AuthenticatedSubjectsIndexRouteImport.update({
     id: '/subjects/',
@@ -135,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/tasks': typeof AuthenticatedTasksRoute
   '/materials/$id': typeof AuthenticatedMaterialsIdRoute
   '/plans/$id': typeof AuthenticatedPlansIdRoute
+  '/practice/questions': typeof AuthenticatedPracticeQuestionsRoute
   '/subjects/$id': typeof AuthenticatedSubjectsIdRoute
   '/workspace/$topicId': typeof AuthenticatedWorkspaceTopicIdRoute
   '/materials/': typeof AuthenticatedMaterialsIndexRoute
@@ -154,6 +162,7 @@ export interface FileRoutesByTo {
   '/tasks': typeof AuthenticatedTasksRoute
   '/materials/$id': typeof AuthenticatedMaterialsIdRoute
   '/plans/$id': typeof AuthenticatedPlansIdRoute
+  '/practice/questions': typeof AuthenticatedPracticeQuestionsRoute
   '/subjects/$id': typeof AuthenticatedSubjectsIdRoute
   '/workspace/$topicId': typeof AuthenticatedWorkspaceTopicIdRoute
   '/materials': typeof AuthenticatedMaterialsIndexRoute
@@ -175,6 +184,7 @@ export interface FileRoutesById {
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_authenticated/materials/$id': typeof AuthenticatedMaterialsIdRoute
   '/_authenticated/plans/$id': typeof AuthenticatedPlansIdRoute
+  '/_authenticated/practice/questions': typeof AuthenticatedPracticeQuestionsRoute
   '/_authenticated/subjects/$id': typeof AuthenticatedSubjectsIdRoute
   '/_authenticated/workspace/$topicId': typeof AuthenticatedWorkspaceTopicIdRoute
   '/_authenticated/materials/': typeof AuthenticatedMaterialsIndexRoute
@@ -196,6 +206,7 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/materials/$id'
     | '/plans/$id'
+    | '/practice/questions'
     | '/subjects/$id'
     | '/workspace/$topicId'
     | '/materials/'
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/materials/$id'
     | '/plans/$id'
+    | '/practice/questions'
     | '/subjects/$id'
     | '/workspace/$topicId'
     | '/materials'
@@ -235,6 +247,7 @@ export interface FileRouteTypes {
     | '/_authenticated/tasks'
     | '/_authenticated/materials/$id'
     | '/_authenticated/plans/$id'
+    | '/_authenticated/practice/questions'
     | '/_authenticated/subjects/$id'
     | '/_authenticated/workspace/$topicId'
     | '/_authenticated/materials/'
@@ -355,6 +368,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPracticeIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/practice/questions': {
+      id: '/_authenticated/practice/questions'
+      path: '/practice/questions'
+      fullPath: '/practice/questions'
+      preLoaderRoute: typeof AuthenticatedPracticeQuestionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/subjects/': {
       id: '/_authenticated/subjects/'
       path: '/subjects'
@@ -390,6 +410,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
   AuthenticatedMaterialsIdRoute: typeof AuthenticatedMaterialsIdRoute
   AuthenticatedPlansIdRoute: typeof AuthenticatedPlansIdRoute
+  AuthenticatedPracticeQuestionsRoute: typeof AuthenticatedPracticeQuestionsRoute
   AuthenticatedSubjectsIdRoute: typeof AuthenticatedSubjectsIdRoute
   AuthenticatedWorkspaceTopicIdRoute: typeof AuthenticatedWorkspaceTopicIdRoute
   AuthenticatedMaterialsIndexRoute: typeof AuthenticatedMaterialsIndexRoute
@@ -409,6 +430,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
   AuthenticatedMaterialsIdRoute: AuthenticatedMaterialsIdRoute,
   AuthenticatedPlansIdRoute: AuthenticatedPlansIdRoute,
+  AuthenticatedPracticeQuestionsRoute: AuthenticatedPracticeQuestionsRoute,
   AuthenticatedSubjectsIdRoute: AuthenticatedSubjectsIdRoute,
   AuthenticatedWorkspaceTopicIdRoute: AuthenticatedWorkspaceTopicIdRoute,
   AuthenticatedMaterialsIndexRoute: AuthenticatedMaterialsIndexRoute,
