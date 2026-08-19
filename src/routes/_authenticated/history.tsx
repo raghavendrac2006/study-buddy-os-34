@@ -16,6 +16,7 @@ import {
 import { usePerformanceHistory, useTopics } from "@/lib/adaptive-db";
 import { useSessions } from "@/lib/db";
 import { useNotes } from "@/lib/workspace-db";
+import { useCodingProblems, usePracticeSessions } from "@/lib/practice-db";
 
 export const Route = createFileRoute("/_authenticated/history")({
   head: () => ({
@@ -51,6 +52,8 @@ function HistoryPage() {
   const sessions = useSessions();
   const notes = useNotes();
   const topics = useTopics();
+  const practice = usePracticeSessions(60);
+  const coding = useCodingProblems();
 
   const titleOf = useMemo(() => {
     const map = new Map((topics.data ?? []).map((t) => [t.id, t.title]));
@@ -60,6 +63,8 @@ function HistoryPage() {
   const rows: Row[] = useMemo(() => {
     const list: Row[] = [];
     for (const p of performance.data ?? []) {
+      // practice/coding rows are rendered from their own logs below
+      if (p.activity_type === "practice" || p.activity_type === "coding") continue;
       list.push({
         key: `p-${p.id}`,
         at: p.created_at,
@@ -97,8 +102,36 @@ function HistoryPage() {
         topicId: n.topic_id,
       });
     }
+    for (const s of practice.data ?? []) {
+      list.push({
+        key: `pr-${s.id}`,
+        at: s.created_at,
+        kind: "practice",
+        title: `Daily ${s.mode} practice`,
+        detail: [
+          `${s.correct_count}/${s.question_count} correct`,
+          s.question_count
+            ? `${Math.round((s.correct_count / s.question_count) * 100)}% accuracy`
+            : null,
+          `${Math.round(s.duration_seconds / 60)} min`,
+        ]
+          .filter(Boolean)
+          .join(" · "),
+      });
+    }
+    for (const c of coding.data ?? []) {
+      list.push({
+        key: `c-${c.id}`,
+        at: c.created_at,
+        kind: "coding",
+        title: c.name,
+        detail: [c.platform, c.topic, c.difficulty, c.result, `${c.minutes_taken} min`]
+          .filter(Boolean)
+          .join(" · "),
+      });
+    }
     return list.sort((a, b) => b.at.localeCompare(a.at));
-  }, [performance.data, sessions.data, notes.data, titleOf]);
+  }, [performance.data, sessions.data, notes.data, practice.data, coding.data, titleOf]);
 
   const kinds = useMemo(() => ["all", ...new Set(rows.map((r) => r.kind))], [rows]);
   const filtered = rows.filter(
