@@ -10,11 +10,17 @@ export type SelectionConfig = {
   count: number;
   difficulty: string; // easy | medium | hard | mixed
   topics?: string[];
+  /** Recent attempts (newest first) used to bias selection toward weak topics. */
+  history?: { topic: string | null; is_correct: boolean; question_id: string | null }[];
 };
+
+const RECENT_WINDOW = 40;
 
 /**
  * Deterministic, explainable question selection.
- * Priority: never-attempted first, then weakest accuracy, then least-recently attempted.
+ * Priority: never-attempted first, then weak topics, then weakest accuracy,
+ * then least-recently attempted. Questions seen in the recent window are
+ * pushed to the back while unused questions remain.
  */
 export function selectQuestions(all: PracticeQuestion[], cfg: SelectionConfig): PracticeQuestion[] {
   const pool = all.filter((q) => {
@@ -26,15 +32,43 @@ export function selectQuestions(all: PracticeQuestion[], cfg: SelectionConfig): 
     return true;
   });
 
+  const history = cfg.history ?? [];
+  const recentIds = new Set(
+    history
+      .slice(0, RECENT_WINDOW)
+      .map((h) => h.question_id)
+      .filter((id): id is string => !!id),
+  );
+  const topicAcc = new Map<string, { correct: number; total: number }>();
+  for (const h of history) {
+    const key = h.topic ?? "General";
+    const s = topicAcc.get(key) ?? { correct: 0, total: 0 };
+    s.total += 1;
+    if (h.is_correct) s.correct += 1;
+    topicAcc.set(key, s);
+  }
+
   const scored = pool.map((q) => {
     const accuracy = q.times_attempted ? q.times_correct / q.times_attempted : 0;
     const last = q.last_attempted_at ? new Date(q.last_attempted_at).getTime() : 0;
-    return { q, unattempted: q.times_attempted === 0 ? 0 : 1, accuracy, last };
+    const t = topicAcc.get(q.topic);
+    // weakest topics first (0 = weakest); unseen topics sit in the middle.
+    const topicScore = t && t.total > 0 ? t.correct / t.total : 0.5;
+    return {
+      q,
+      recent: recentIds.has(q.id) ? 1 : 0,
+      unattempted: q.times_attempted === 0 ? 0 : 1,
+      topicScore,
+      accuracy,
+      last,
+    };
   });
 
   scored.sort(
     (a, b) =>
+      a.recent - b.recent ||
       a.unattempted - b.unattempted ||
+      a.topicScore - b.topicScore ||
       a.accuracy - b.accuracy ||
       a.last - b.last ||
       a.q.id.localeCompare(b.q.id),
@@ -42,6 +76,21 @@ export function selectQuestions(all: PracticeQuestion[], cfg: SelectionConfig): 
 
   return scored.slice(0, Math.max(1, cfg.count)).map((s) => s.q);
 }
+
+/** Result-based revision spacing for logged coding/DSA problems. */
+export function revisionDaysFor(result: string, difficulty?: string) {
+  const base = result === "failed" ? 2 : result === "partial" ? 5 : 14;
+  if (difficulty === "hard") return Math.max(1, Math.round(base * 0.7));
+  if (difficulty === "easy") return Math.round(base * 1.5);
+  return base;
+}
+
+export function revisionDateFor(result: string, difficulty?: string, from = new Date()) {
+  const d = new Date(from);
+  d.setDate(d.getDate() + revisionDaysFor(result, difficulty));
+  return d.toLocaleDateString("en-CA");
+}
+
 
 export function selectionReason(q: PracticeQuestion) {
   if (q.times_attempted === 0) return "New question";
