@@ -220,17 +220,36 @@ export function useCodingProblems() {
 export function useCreateCodingProblem() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (values: Omit<T["coding_problems"]["Insert"], "user_id">) =>
-      unwrap(
-        await supabase
-          .from("coding_problems")
-          .insert({ ...values, user_id: await uid() })
-          .select("*")
-          .single(),
-      ),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["coding-problems"] }),
+    mutationFn: async (values: Omit<T["coding_problems"]["Insert"], "user_id">) => {
+      const user_id = await uid();
+      const row = unwrap(
+        await supabase.from("coding_problems").insert({ ...values, user_id }).select("*").single(),
+      )!;
+      // Shared performance signal so coding work shows up in weak-topic insight.
+      await supabase.from("performance_records").insert({
+        user_id,
+        activity_type: "coding",
+        score: row.result === "solved" ? 1 : row.result === "partial" ? 0.5 : 0,
+        completion: 1,
+        planned_minutes: 0,
+        actual_minutes: row.minutes_taken ?? 0,
+        signals: {
+          topic: row.topic,
+          platform: row.platform,
+          difficulty: row.difficulty,
+          result: row.result,
+        },
+        reflection: `${row.name} · ${row.topic} · ${row.result}`,
+      });
+      return row;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["coding-problems"] });
+      qc.invalidateQueries({ queryKey: ["performance"] });
+    },
   });
 }
+
 
 export function useUpdateCodingProblem() {
   const qc = useQueryClient();
