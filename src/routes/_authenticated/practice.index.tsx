@@ -78,10 +78,21 @@ function DailyPractice() {
     return () => clearInterval(t);
   }, [stage]);
 
-  const available = useMemo(
-    () => selectQuestions(questions.data ?? [], { mode, count, difficulty }),
-    [questions.data, mode, count, difficulty],
+  const history = useMemo(
+    () =>
+      (attempts.data ?? []).map((a) => ({
+        topic: a.topic,
+        is_correct: a.is_correct,
+        question_id: a.question_id,
+      })),
+    [attempts.data],
   );
+
+  const available = useMemo(
+    () => selectQuestions(questions.data ?? [], { mode, count, difficulty, history }),
+    [questions.data, mode, count, difficulty, history],
+  );
+
 
   const bankSize = (questions.data ?? []).filter((q) => !q.archived).length;
 
