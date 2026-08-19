@@ -175,12 +175,27 @@ export function useSavePracticeRun() {
         ),
       );
 
+      // Feed the shared performance history (weak-topic + activity signals).
+      const correct = input.attempts.filter((a) => a.is_correct).length;
+      await supabase.from("performance_records").insert({
+        user_id,
+        activity_type: "practice",
+        score: input.attempts.length ? correct / input.attempts.length : 0,
+        completion: 1,
+        planned_minutes: input.targetMinutes,
+        actual_minutes: Math.round(input.durationSeconds / 60),
+        signals: { mode: input.mode, topics },
+        reflection: `Daily ${input.mode} practice · ${correct}/${input.attempts.length}`,
+      });
+
       return session;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["practice-sessions"] });
       qc.invalidateQueries({ queryKey: ["practice-attempts"] });
       qc.invalidateQueries({ queryKey: ["practice-questions"] });
+      qc.invalidateQueries({ queryKey: ["performance"] });
+
     },
   });
 }
