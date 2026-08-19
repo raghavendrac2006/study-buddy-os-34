@@ -32,7 +32,7 @@ import {
   useDeleteCodingProblem,
   type CodingProblem,
 } from "@/lib/practice-db";
-import { DIFFICULTIES } from "@/lib/practice";
+import { DIFFICULTIES, revisionDateFor } from "@/lib/practice";
 import { todayISO } from "@/lib/scheduling";
 
 export const Route = createFileRoute("/_authenticated/practice/coding")({
@@ -201,7 +201,7 @@ function CodingLog() {
       approach: draft.approach.trim() || null,
       needs_revision: draft.needs_revision,
       revision_due_date: draft.needs_revision
-        ? new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10)
+        ? revisionDateFor(draft.result, draft.difficulty)
         : null,
     };
     try {
@@ -369,7 +369,7 @@ function CodingLog() {
                         needs_revision: !p.needs_revision,
                         revision_due_date: p.needs_revision
                           ? null
-                          : new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10),
+                          : revisionDateFor(p.result, p.difficulty),
                       })
                     }
                   >
