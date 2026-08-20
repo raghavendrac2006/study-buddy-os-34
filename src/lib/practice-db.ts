@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { recordPerformance, resolveTopicIdByTitle } from "@/lib/adaptive-db";
 
 type T = Database["public"]["Tables"];
 export type PracticeQuestion = T["practice_questions"]["Row"];
