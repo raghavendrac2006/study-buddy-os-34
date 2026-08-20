@@ -390,18 +390,18 @@ export function useMasteryHistory(topicId?: string) {
  * The heart of the adaptive loop: stores the raw signal, rolls mastery forward,
  * reschedules spaced revision and queues reinforcement work.
  */
-export function useRecordPerformance() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (args: {
-      topicId: string;
-      activityId?: string | null | undefined;
-      sessionId?: string | null | undefined;
-      planId?: string | null | undefined;
-      activityType?: string | undefined;
-      signal: PerformanceSignal;
-      reflection?: string | undefined;
-    }) => {
+export type RecordPerformanceArgs = {
+  topicId: string;
+  activityId?: string | null | undefined;
+  sessionId?: string | null | undefined;
+  planId?: string | null | undefined;
+  activityType?: string | undefined;
+  signal: PerformanceSignal;
+  reflection?: string | undefined;
+};
+
+/** Reusable core of the adaptive loop (also called outside React by practice/coding). */
+export async function recordPerformance(args: RecordPerformanceArgs) {
       const user_id = await uid();
       const day = today();
 
@@ -531,7 +531,25 @@ export function useRecordPerformance() {
       }
 
       return next;
-    },
+}
+
+/** Resolves a free-text practice/coding topic label to an existing structured topic. */
+export async function resolveTopicIdByTitle(title: string): Promise<string | null> {
+  const t = title.trim();
+  if (t.length < 3) return null;
+  const res = await supabase
+    .from("topics")
+    .select("id,title")
+    .ilike("title", t)
+    .limit(1);
+  const rows = unwrap(res);
+  return rows?.[0]?.id ?? null;
+}
+
+export function useRecordPerformance() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: recordPerformance,
     onSuccess: () => {
       for (const key of ["mastery", "revisions", "activities", "performance", "mastery-history"]) {
         qc.invalidateQueries({ queryKey: [key] });
