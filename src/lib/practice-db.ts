@@ -188,6 +188,28 @@ export function useSavePracticeRun() {
         reflection: `Daily ${input.mode} practice · ${correct}/${input.attempts.length}`,
       });
 
+      // Where a practice topic maps to an existing structured topic, run it through
+      // the existing adaptive mastery/revision engine (no new systems).
+      for (const [label, t] of Object.entries(topics)) {
+        try {
+          const topicId = await resolveTopicIdByTitle(label);
+          if (!topicId) continue;
+          await recordPerformance({
+            topicId,
+            activityType: "practice",
+            signal: {
+              score: (t.correct / Math.max(1, t.total)) * 100,
+              completion: 1,
+              plannedMinutes: input.targetMinutes,
+              actualMinutes: Math.round(input.durationSeconds / 60),
+            },
+            reflection: `Daily practice · ${label} · ${t.correct}/${t.total}`,
+          });
+        } catch {
+          /* mapping is best-effort; practice must never fail because of it */
+        }
+      }
+
       return session;
     },
     onSuccess: () => {
@@ -195,7 +217,8 @@ export function useSavePracticeRun() {
       qc.invalidateQueries({ queryKey: ["practice-attempts"] });
       qc.invalidateQueries({ queryKey: ["practice-questions"] });
       qc.invalidateQueries({ queryKey: ["performance"] });
-
+      qc.invalidateQueries({ queryKey: ["mastery"] });
+      qc.invalidateQueries({ queryKey: ["revisions"] });
     },
   });
 }
