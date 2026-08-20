@@ -265,11 +265,33 @@ export function useCreateCodingProblem() {
         },
         reflection: `${row.name} · ${row.topic} · ${row.result}`,
       });
+
+      // Only when the logged topic maps to an existing structured topic do we
+      // feed the existing mastery/revision engine; otherwise behaviour is unchanged.
+      try {
+        const topicId = await resolveTopicIdByTitle(row.topic ?? "");
+        if (topicId) {
+          await recordPerformance({
+            topicId,
+            activityType: "practice",
+            signal: {
+              score: row.result === "solved" ? 90 : row.result === "partial" ? 55 : 20,
+              completion: 1,
+              actualMinutes: row.minutes_taken ?? 0,
+            },
+            reflection: `Coding · ${row.name} · ${row.result}`,
+          });
+        }
+      } catch {
+        /* best-effort mapping */
+      }
       return row;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["coding-problems"] });
       qc.invalidateQueries({ queryKey: ["performance"] });
+      qc.invalidateQueries({ queryKey: ["mastery"] });
+      qc.invalidateQueries({ queryKey: ["revisions"] });
     },
   });
 }
