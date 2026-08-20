@@ -145,6 +145,8 @@ function HistoryPage() {
   return (
     <AppShell title="History">
       <div className="space-y-5">
+        <DailySummary />
+
         <header className="flex items-center gap-2">
           <HistoryIcon className="size-5 text-primary" />
           <div>
