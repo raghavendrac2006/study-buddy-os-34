@@ -17,6 +17,8 @@ import { usePerformanceHistory, useTopics } from "@/lib/adaptive-db";
 import { useSessions } from "@/lib/db";
 import { useNotes } from "@/lib/workspace-db";
 import { useCodingProblems, usePracticeSessions } from "@/lib/practice-db";
+import { DailySummary } from "@/components/daily-summary";
+
 
 export const Route = createFileRoute("/_authenticated/history")({
   head: () => ({
