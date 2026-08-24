@@ -215,7 +215,7 @@ function CodingLog() {
   }
 
   return (
-    <AppShell title="Practice">
+    <AppShell title="Coding & DSA">
       <div className="space-y-6">
         <PracticeTabs />
 

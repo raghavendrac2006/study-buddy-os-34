@@ -110,7 +110,7 @@ function WorkspacePage() {
   const objectiveTexts = (objectives.data ?? []).map((o) => o.text);
 
   return (
-    <AppShell title={topic.title}>
+    <AppShell title={topic.title} subtitle="Learning workspace" back>
       <div className="space-y-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>

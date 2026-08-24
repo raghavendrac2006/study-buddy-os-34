@@ -277,7 +277,7 @@ function MaterialDetail() {
   const savedTopics = (topics.data ?? []).filter((t) => t.kind === "topic");
 
   return (
-    <AppShell title="Material">
+    <AppShell title="Study material" subtitle="Details & analysis" back="/materials">
       <div className="space-y-8">
         <header className="flex flex-wrap items-start justify-between gap-3">
           <div>

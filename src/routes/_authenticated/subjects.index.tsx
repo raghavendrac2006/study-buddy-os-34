@@ -106,7 +106,7 @@ function SubjectsPage() {
   const list = subjects.data ?? [];
 
   return (
-    <AppShell title="Learn">
+    <AppShell title="Subjects">
       <div className="space-y-6">
         <div className="flex items-center justify-between gap-3">
           <div>

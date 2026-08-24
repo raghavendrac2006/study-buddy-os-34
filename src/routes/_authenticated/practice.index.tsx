@@ -170,7 +170,7 @@ function DailyPractice() {
   );
 
   return (
-    <AppShell title="Practice">
+    <AppShell title="Daily practice" subtitle="Aptitude & reasoning warm-up">
       <div className="space-y-6">
         <PracticeTabs />
 

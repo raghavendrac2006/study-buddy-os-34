@@ -76,7 +76,7 @@ function SubjectDetail() {
   };
 
   return (
-    <AppShell title={subject.data?.name ?? "Subject"}>
+    <AppShell title={subject.data?.name ?? "Subject"} back="/subjects">
       <div className="space-y-6">
         <Button variant="ghost" size="sm" asChild className="-ml-2">
           <Link to="/subjects">
