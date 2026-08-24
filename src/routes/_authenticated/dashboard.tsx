@@ -5,9 +5,6 @@ import {
   Dumbbell,
   BookOpen,
   CheckCircle2,
-  Clock,
-  Flame,
-  ListTodo,
   Play,
   RotateCcw,
   Target,
@@ -21,6 +18,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
 import {
   useLearningDays,
   useProfile,
