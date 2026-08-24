@@ -320,55 +320,68 @@ function Dashboard() {
           )}
         </Section>
 
-        {/* Continue learning */}
-        <Section title="Coming up">
-          {upcoming.length === 0 ? (
-            <Empty text="No upcoming days planned yet." />
-          ) : (
-            <ul className="space-y-2">
-              {upcoming.map((d) => (
-                <li key={d.id} className="surface flex items-center gap-3 p-4">
-                  <BookOpen className="size-4 shrink-0 text-muted-foreground" />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">{d.topic}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {d.subject?.name} · Day {d.day_number} · {d.planned_date}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Section>
+        {/* Secondary detail — collapsed by default to keep the first screen simple */}
+        <Accordion type="multiple" className="space-y-2">
+          <AccordionItem value="goals" className="surface border-0 px-4">
+            <AccordionTrigger className="text-sm font-semibold">Goals</AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <GoalsPanel plannedMinutes={planMinutes} dailyBudget={target} />
+            </AccordionContent>
+          </AccordionItem>
 
-        {/* Week trend */}
-        <Section title="This week">
-          <div className="surface p-5">
-            <div className="flex items-end justify-between gap-2">
-              {stats.last7.map((d) => {
-                const pct = Math.min(100, (d.minutes / Math.max(target, 1)) * 100);
-                return (
-                  <div key={d.date} className="flex flex-1 flex-col items-center gap-2">
-                    <div className="flex h-24 w-full items-end rounded-md bg-muted">
-                      <div
-                        className="w-full rounded-md bg-primary transition-all"
-                        style={{ height: `${Math.max(pct, d.minutes > 0 ? 6 : 2)}%` }}
-                      />
+          <AccordionItem value="upcoming" className="surface border-0 px-4">
+            <AccordionTrigger className="text-sm font-semibold">Coming up</AccordionTrigger>
+            <AccordionContent className="pb-4">
+              {upcoming.length === 0 ? (
+                <Empty text="No upcoming days planned yet." />
+              ) : (
+                <ul className="space-y-2">
+                  {upcoming.map((d) => (
+                    <li key={d.id} className="flex items-center gap-3 py-2">
+                      <BookOpen className="size-4 shrink-0 text-muted-foreground" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium">{d.topic}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {d.subject?.name} · Day {d.day_number} · {d.planned_date}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="week" className="surface border-0 px-4">
+            <AccordionTrigger className="text-sm font-semibold">This week</AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <div className="flex items-end justify-between gap-2">
+                {stats.last7.map((d) => {
+                  const pct = Math.min(100, (d.minutes / Math.max(target, 1)) * 100);
+                  return (
+                    <div key={d.date} className="flex flex-1 flex-col items-center gap-2">
+                      <div className="flex h-24 w-full items-end rounded-md bg-muted">
+                        <div
+                          className="w-full rounded-md bg-primary transition-all"
+                          style={{ height: `${Math.max(pct, d.minutes > 0 ? 6 : 2)}%` }}
+                        />
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">
+                        {new Date(d.date + "T00:00:00").toLocaleDateString(undefined, {
+                          weekday: "narrow",
+                        })}
+                      </span>
                     </div>
-                    <span className="text-[10px] text-muted-foreground">
-                      {new Date(d.date + "T00:00:00").toLocaleDateString(undefined, {
-                        weekday: "narrow",
-                      })}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-            <p className="mt-4 text-xs text-muted-foreground">
-              {minutesLabel(stats.weekMinutes)} studied in the last 7 days.
-            </p>
-          </div>
-        </Section>
+                  );
+                })}
+              </div>
+              <p className="mt-4 text-xs text-muted-foreground">
+                {minutesLabel(stats.weekMinutes)} studied in the last 7 days.
+              </p>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
       </div>
     </AppShell>
   );
