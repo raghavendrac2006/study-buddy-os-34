@@ -387,34 +387,8 @@ function Dashboard() {
   );
 }
 
-function StatCard({
-  icon: Icon,
-  label,
-  value,
-  hint,
-  loading,
-  accent,
-}: {
-  icon: React.ElementType;
-  label: string;
-  value: string;
-  hint: string;
-  loading?: boolean;
-  accent?: boolean;
-}) {
-  return (
-    <div className="surface p-4">
-      <Icon className={accent ? "size-4 text-flame" : "size-4 text-muted-foreground"} />
-      {loading ? (
-        <Skeleton className="mt-3 h-6 w-16" />
-      ) : (
-        <p className="tabular mt-3 text-xl font-semibold">{value}</p>
-      )}
-      <p className="text-xs font-medium">{label}</p>
-      <p className="text-[11px] text-muted-foreground">{hint}</p>
-    </div>
-  );
-}
+
+
 
 function DailyPracticeCard({ today }: { today: string }) {
   const sessions = usePracticeSessions(10);
