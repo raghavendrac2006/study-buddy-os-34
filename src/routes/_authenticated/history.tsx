@@ -145,7 +145,7 @@ function HistoryPage() {
   const loading = performance.isLoading || sessions.isLoading || notes.isLoading;
 
   return (
-    <AppShell title="History">
+    <AppShell title="History & summary">
       <div className="space-y-5">
         <DailySummary />
 

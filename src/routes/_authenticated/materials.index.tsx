@@ -133,7 +133,7 @@ function MaterialsPage() {
   };
 
   return (
-    <AppShell title="Material">
+    <AppShell title="Study material" subtitle="Uploads & YouTube courses">
       <div className="space-y-8">
         <header>
           <h2 className="text-2xl font-semibold tracking-tight">Your study material</h2>

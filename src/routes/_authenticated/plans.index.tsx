@@ -24,7 +24,7 @@ function PlansPage() {
   const activities = useActivities();
 
   return (
-    <AppShell title="Plans">
+    <AppShell title="Learning plans">
       <div className="space-y-6">
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div>

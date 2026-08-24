@@ -136,7 +136,7 @@ function Dashboard() {
   });
 
   return (
-    <AppShell title="Today">
+    <AppShell title="Home">
       <div className="space-y-8">
         <header>
           <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">{dateLabel}</p>

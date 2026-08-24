@@ -138,7 +138,7 @@ function PlanDetail() {
   };
 
   return (
-    <AppShell title="Plan">
+    <AppShell title="Learning plan" back="/plans">
       <div className="space-y-7">
         <header>
           <Link to="/plans" className="text-xs text-muted-foreground hover:underline">

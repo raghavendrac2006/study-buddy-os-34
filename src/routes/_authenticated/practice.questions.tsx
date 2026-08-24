@@ -196,7 +196,7 @@ function QuestionBank() {
   }
 
   return (
-    <AppShell title="Practice">
+    <AppShell title="Question bank" back="/practice">
       <div className="space-y-6">
         <PracticeTabs />
 
