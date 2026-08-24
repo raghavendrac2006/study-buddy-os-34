@@ -142,14 +142,7 @@ function Dashboard() {
           </h2>
         </header>
 
-        <AdaptiveToday />
-
-        <DailyPracticeCard today={today} />
-
-        <GoalsPanel plannedMinutes={planMinutes} dailyBudget={target} />
-
-        {/* Today's Mission */}
-
+        {/* One obvious primary action first */}
         <section className="surface overflow-hidden">
           <div className="border-b border-border bg-accent/40 px-5 py-4">
             <div className="flex items-center gap-2">
@@ -179,16 +172,21 @@ function Dashboard() {
                 <Play className="size-4" /> Start today's study
               </Link>
             </Button>
+            <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground sm:grid-cols-4">
+              <span className="tabular">Streak {stats.current}d</span>
+              <span className="tabular">
+                Plan {donePlan}/{plan.length}
+              </span>
+              <span className="tabular">Open tasks {buckets.open.length}</span>
+              <span className="tabular">Total {minutesLabel(stats.totalMinutes)}</span>
+            </div>
           </div>
         </section>
 
-        {/* Stat cards */}
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <StatCard icon={Clock} label="Study time" value={minutesLabel(stats.totalMinutes)} hint="all time" loading={loading} />
-          <StatCard icon={Flame} label="Current streak" value={`${stats.current}d`} hint={`best ${stats.longest}d`} loading={loading} accent />
-          <StatCard icon={CheckCircle2} label="Today's plan" value={`${donePlan}/${plan.length}`} hint="topics done" loading={loading} />
-          <StatCard icon={ListTodo} label="Open tasks" value={`${buckets.open.length}`} hint={`${buckets.overdue.length} overdue`} loading={loading} />
-        </div>
+        <AdaptiveToday />
+
+        <DailyPracticeCard today={today} />
+
 
         {/* Today's learning plan */}
         <Section
