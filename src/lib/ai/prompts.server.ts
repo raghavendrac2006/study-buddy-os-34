@@ -259,3 +259,37 @@ ${input.selection.slice(0, 12_000) || "no context selected"}
 """`,
   };
 }
+
+/* ---------- AI mentor (read-only) ---------- */
+
+export function mentorPrompt(input: {
+  question: string;
+  context: string;
+  history: { role: "user" | "mentor"; text: string }[];
+}) {
+  return {
+    system: `You are the learner's personal study mentor inside the app "My Study Compass".
+You are READ-ONLY: you never change plans, goals, schedules or records. You only analyse and advise.
+Rules:
+- Base every claim about progress, scores, mastery or schedule strictly on the APP DATA block.
+- Never invent sessions, scores, revisions or topics. If the data is missing or empty, say so plainly.
+- Clearly separate what the data shows from general study advice.
+- Be concise, specific and actionable. Respect any time limit the learner mentions.
+Return JSON: {"answer":string,"from_data":[string],"suggestions":[string],"data_gaps":[string]}
+- from_data: short factual statements drawn only from APP DATA.
+- suggestions: concrete next steps (advice, not actions you performed).
+- data_gaps: what the app has no data for, if relevant.`,
+    user: `${
+      input.history.length
+        ? `CONVERSATION SO FAR:\n${input.history
+            .map((h) => `${h.role === "user" ? "Learner" : "Mentor"}: ${h.text}`)
+            .join("\n")}\n\n`
+        : ""
+    }APP DATA (read-only snapshot):
+"""
+${input.context}
+"""
+
+Learner question: ${input.question}`,
+  };
+}

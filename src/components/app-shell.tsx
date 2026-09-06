@@ -1,6 +1,7 @@
 import { Link, useRouterState, useRouter } from "@tanstack/react-router";
 import {
   Home,
+  Sparkles,
   BookOpen,
   Dumbbell,
   CalendarDays,
@@ -37,6 +38,7 @@ const NAV_GROUPS: { heading: string; items: NavItem[] }[] = [
     heading: "Today",
     items: [
       { to: "/dashboard", label: "Home", icon: Home },
+      { to: "/mentor", label: "AI Mentor", icon: Sparkles },
       { to: "/calendar", label: "Calendar", icon: CalendarDays },
     ],
   },
@@ -69,7 +71,7 @@ const MOBILE_NAV: NavItem[] = [
   { to: "/dashboard", label: "Home", icon: Home },
   { to: "/materials", label: "Learn", icon: BookOpen },
   { to: "/practice", label: "Practice", icon: Dumbbell },
-  { to: "/calendar", label: "Calendar", icon: CalendarDays },
+  { to: "/mentor", label: "Mentor", icon: Sparkles },
 ];
 
 function isActive(pathname: string, to: string) {

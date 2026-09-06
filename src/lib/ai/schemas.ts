@@ -163,3 +163,14 @@ export const AssistantReplySchema = z.object({
 });
 
 export type AssistantReply = z.infer<typeof AssistantReplySchema>;
+
+/* ---------- AI mentor ---------- */
+
+export const MentorReplySchema = z.object({
+  answer: z.string().min(1).max(4000),
+  from_data: z.array(z.string().max(240)).max(8).optional().default([]),
+  suggestions: z.array(z.string().max(240)).max(6).optional().default([]),
+  data_gaps: z.array(z.string().max(240)).max(4).optional().default([]),
+});
+
+export type MentorReply = z.infer<typeof MentorReplySchema>;

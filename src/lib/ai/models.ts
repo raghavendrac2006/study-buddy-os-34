@@ -10,7 +10,8 @@ export type AiTask =
   | "reflection"
   | "recall"
   | "assessment"
-  | "assistant";
+  | "assistant"
+  | "mentor";
 
 type TaskConfig = {
   /** Primary model id sent to OpenRouter. */
@@ -97,6 +98,14 @@ export const MODEL_CONFIG: Record<AiTask, TaskConfig> = {
     fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
     temperature: 0.3,
     maxTokens: 4000,
+    timeoutMs: 90_000,
+    reasoning: false,
+  },
+  mentor: {
+    model: "openrouter/free",
+    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
+    temperature: 0.4,
+    maxTokens: 2000,
     timeoutMs: 90_000,
     reasoning: false,
   },
