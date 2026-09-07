@@ -1,5 +1,5 @@
 import type { ZodSchema } from "zod";
-import { MODEL_CONFIG, modelsFor, type AiTask } from "./models";
+import { MODEL_CONFIG, modelsFor, isFreeModel, type AiTask } from "./models";
 
 const ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
 
@@ -42,6 +42,9 @@ async function callOnce(opts: {
   timeoutMs: number;
   reasoning: boolean;
 }): Promise<string> {
+  if (!isFreeModel(opts.model)) {
+    throw new AiError("provider", `Refusing to call non-free model "${opts.model}".`);
+  }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), opts.timeoutMs);
   try {
@@ -61,6 +64,8 @@ async function callOnce(opts: {
         // Free routers frequently pick reasoning models that burn the whole
         // output budget on chain-of-thought and return no content at all.
         reasoning: { enabled: opts.reasoning },
+        // Hard zero-cost constraint: never route to a paid provider/model.
+        provider: { max_price: { prompt: 0, completion: 0 } },
         messages: [
           { role: "system", content: opts.system },
           { role: "user", content: opts.user },
