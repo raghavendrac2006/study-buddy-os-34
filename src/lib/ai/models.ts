@@ -46,7 +46,7 @@ export const SAFE_FREE_FALLBACKS = [
 export const MODEL_CONFIG: Record<AiTask, TaskConfig> = {
   material_analysis: {
     model: "openrouter/free",
-    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
+    fallbacks: [...SAFE_FREE_FALLBACKS],
     heavyThresholdChars: 60_000,
     temperature: 0.2,
     maxTokens: 8000,
@@ -55,7 +55,7 @@ export const MODEL_CONFIG: Record<AiTask, TaskConfig> = {
   },
   plan_generation: {
     model: "openrouter/free",
-    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
+    fallbacks: [...SAFE_FREE_FALLBACKS],
     temperature: 0.3,
     maxTokens: 8000,
     timeoutMs: 120_000,
@@ -63,7 +63,7 @@ export const MODEL_CONFIG: Record<AiTask, TaskConfig> = {
   },
   daily_adaptation: {
     model: "openrouter/free",
-    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
+    fallbacks: [...SAFE_FREE_FALLBACKS],
     temperature: 0.3,
     maxTokens: 2000,
     timeoutMs: 60_000,
@@ -71,7 +71,7 @@ export const MODEL_CONFIG: Record<AiTask, TaskConfig> = {
   },
   reflection: {
     model: "openrouter/free",
-    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
+    fallbacks: [...SAFE_FREE_FALLBACKS],
     temperature: 0.2,
     maxTokens: 1200,
     timeoutMs: 60_000,
@@ -79,7 +79,7 @@ export const MODEL_CONFIG: Record<AiTask, TaskConfig> = {
   },
   course_plan: {
     model: "openrouter/free",
-    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
+    fallbacks: [...SAFE_FREE_FALLBACKS],
     temperature: 0.3,
     maxTokens: 8000,
     timeoutMs: 120_000,
@@ -87,7 +87,7 @@ export const MODEL_CONFIG: Record<AiTask, TaskConfig> = {
   },
   recall: {
     model: "openrouter/free",
-    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
+    fallbacks: [...SAFE_FREE_FALLBACKS],
     temperature: 0.3,
     maxTokens: 2000,
     timeoutMs: 60_000,
@@ -95,7 +95,7 @@ export const MODEL_CONFIG: Record<AiTask, TaskConfig> = {
   },
   assessment: {
     model: "openrouter/free",
-    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
+    fallbacks: [...SAFE_FREE_FALLBACKS],
     temperature: 0.3,
     maxTokens: 4000,
     timeoutMs: 90_000,
@@ -103,7 +103,7 @@ export const MODEL_CONFIG: Record<AiTask, TaskConfig> = {
   },
   mentor: {
     model: "openrouter/free",
-    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
+    fallbacks: [...SAFE_FREE_FALLBACKS],
     temperature: 0.4,
     maxTokens: 2000,
     timeoutMs: 90_000,
@@ -111,7 +111,7 @@ export const MODEL_CONFIG: Record<AiTask, TaskConfig> = {
   },
   assistant: {
     model: "openrouter/free",
-    fallbacks: ["openrouter/auto", ...SAFE_FREE_FALLBACKS],
+    fallbacks: [...SAFE_FREE_FALLBACKS],
     temperature: 0.4,
     maxTokens: 1600,
     timeoutMs: 60_000,
