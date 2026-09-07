@@ -120,11 +120,19 @@ export const MODEL_CONFIG: Record<AiTask, TaskConfig> = {
 };
 
 
+/**
+ * Free-only guard. Only the free router and explicit `:free` model ids may be
+ * used, so there is no accidental paid-spend path.
+ */
+export function isFreeModel(model: string): boolean {
+  return model === "openrouter/free" || model.endsWith(":free");
+}
+
 export function modelsFor(task: AiTask, inputChars = 0): string[] {
   const cfg = MODEL_CONFIG[task];
   const primary =
     cfg.heavyModel && cfg.heavyThresholdChars && inputChars > cfg.heavyThresholdChars
       ? cfg.heavyModel
       : cfg.model;
-  return [primary, ...cfg.fallbacks.filter((m) => m !== primary)];
+  return [primary, ...cfg.fallbacks.filter((m) => m !== primary)].filter(isFreeModel);
 }
