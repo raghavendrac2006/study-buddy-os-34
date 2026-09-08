@@ -30,7 +30,12 @@ export const askMentor = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const needs = decideNeeds(data.question);
-    const snapshot = await buildMentorContext(context.supabase, context.userId, needs);
+    const snapshot = await buildMentorContext(
+      context.supabase,
+      context.userId,
+      needs,
+      data.question,
+    );
     const { system, user } = mentorPrompt({
       question: data.question,
       context: snapshot,
