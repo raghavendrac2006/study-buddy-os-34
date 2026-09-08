@@ -39,8 +39,8 @@ type TaskConfig = {
  * resort when the free router keeps returning empty content.
  */
 export const SAFE_FREE_FALLBACKS = [
-  "meta-llama/llama-3.3-70b-instruct:free",
-  "mistralai/mistral-small-3.2-24b-instruct:free",
+  "google/gemma-4-31b-it:free",
+  "google/gemma-4-26b-a4b-it:free",
 ];
 
 export const MODEL_CONFIG: Record<AiTask, TaskConfig> = {
