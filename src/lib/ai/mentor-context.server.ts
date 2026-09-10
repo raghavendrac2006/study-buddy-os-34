@@ -16,15 +16,37 @@ export type ContextNeeds = {
 };
 
 const RULES: { key: keyof ContextNeeds; re: RegExp }[] = [
-  { key: "plan", re: /(today|tomorrow|plan|schedule|next|behind|priorit|hour|time|study what|what should)/i },
-  { key: "revisions", re: /(revis|review|due|spaced|forget)/i },
-  { key: "mastery", re: /(weak|strong|mastery|master|struggl|improve|topic|progress|behind)/i },
-  { key: "sessions", re: /(study|session|hours|time|consistent|behind|progress|streak)/i },
-  { key: "practice", re: /(aptitude|reasoning|practice|quiz|question|accuracy|score)/i },
-  { key: "coding", re: /(cod|dsa|leetcode|problem|algorithm|program)/i },
-  { key: "goals", re: /(goal|target|deadline|exam|behind|today|plan)/i },
-  { key: "materials", re: /(material|pdf|document|youtube|video|course|upload|book)/i },
+  {
+    key: "plan",
+    re: /(today|tonight|tomorrow|this week|plan|schedule|next|now|behind|priorit|focus|hour|minute|time|study what|what should|what do i|do next|start with)/i,
+  },
+  { key: "revisions", re: /(revis|review|due|spaced|forget|recall|overdue|pending)/i },
+  {
+    key: "mastery",
+    re: /(weak|weakest|strong|mastery|master|struggl|improve|topic|progress|progressing|how am i|doing|behind|gap|biggest)/i,
+  },
+  {
+    key: "sessions",
+    re: /(study|studied|session|hours|time|consistent|behind|progress|progressing|recent|lately|last week|how am i|done)/i,
+  },
+  {
+    key: "practice",
+    re: /(aptitude|reasoning|practice|practise|quiz|mcq|question|accuracy|score|percent|correct|mock|test)/i,
+  },
+  {
+    key: "coding",
+    re: /(cod|dsa|leetcode|problem|algorithm|program|data structure|array|graph|recursion|solved)/i,
+  },
+  {
+    key: "goals",
+    re: /(goal|target|deadline|exam|due date|interview|placement|behind|today|plan|next)/i,
+  },
+  { key: "materials", re: /(material|pdf|document|doc|youtube|video|course|upload|book|chapter|unit)/i },
 ];
+
+/** Broad "what now / how am I doing" questions need the full picture. */
+const BROAD =
+  /(what should i|what do i|do next|what next|next step|how am i|am i behind|overall|summary|status|biggest)/i;
 
 export function decideNeeds(question: string): ContextNeeds {
   const needs: ContextNeeds = {
