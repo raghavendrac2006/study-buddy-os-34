@@ -60,6 +60,14 @@ export function decideNeeds(question: string): ContextNeeds {
     materials: false,
   };
   for (const r of RULES) if (r.re.test(question)) needs[r.key] = true;
+  // "What should I do next?" style questions need the whole picture, compactly.
+  if (BROAD.test(question)) {
+    needs.plan = true;
+    needs.revisions = true;
+    needs.mastery = true;
+    needs.sessions = true;
+    needs.goals = true;
+  }
   // Always give a minimal anchor so answers are never contextless.
   if (!Object.values(needs).some(Boolean)) {
     needs.plan = true;
