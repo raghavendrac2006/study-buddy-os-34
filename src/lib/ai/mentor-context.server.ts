@@ -16,15 +16,37 @@ export type ContextNeeds = {
 };
 
 const RULES: { key: keyof ContextNeeds; re: RegExp }[] = [
-  { key: "plan", re: /(today|tomorrow|plan|schedule|next|behind|priorit|hour|time|study what|what should)/i },
-  { key: "revisions", re: /(revis|review|due|spaced|forget)/i },
-  { key: "mastery", re: /(weak|strong|mastery|master|struggl|improve|topic|progress|behind)/i },
-  { key: "sessions", re: /(study|session|hours|time|consistent|behind|progress|streak)/i },
-  { key: "practice", re: /(aptitude|reasoning|practice|quiz|question|accuracy|score)/i },
-  { key: "coding", re: /(cod|dsa|leetcode|problem|algorithm|program)/i },
-  { key: "goals", re: /(goal|target|deadline|exam|behind|today|plan)/i },
-  { key: "materials", re: /(material|pdf|document|youtube|video|course|upload|book)/i },
+  {
+    key: "plan",
+    re: /(today|tonight|tomorrow|this week|plan|schedule|next|now|behind|priorit|focus|hour|minute|time|study what|what should|what do i|do next|start with)/i,
+  },
+  { key: "revisions", re: /(revis|review|due|spaced|forget|recall|overdue|pending)/i },
+  {
+    key: "mastery",
+    re: /(weak|weakest|strong|mastery|master|struggl|improve|topic|progress|progressing|how am i|doing|behind|gap|biggest)/i,
+  },
+  {
+    key: "sessions",
+    re: /(study|studied|session|hours|time|consistent|behind|progress|progressing|recent|lately|last week|how am i|done)/i,
+  },
+  {
+    key: "practice",
+    re: /(aptitude|reasoning|practice|practise|quiz|mcq|question|accuracy|score|percent|correct|mock|test)/i,
+  },
+  {
+    key: "coding",
+    re: /(cod|dsa|leetcode|problem|algorithm|program|data structure|array|graph|recursion|solved)/i,
+  },
+  {
+    key: "goals",
+    re: /(goal|target|deadline|exam|due date|interview|placement|behind|today|plan|next)/i,
+  },
+  { key: "materials", re: /(material|pdf|document|doc|youtube|video|course|upload|book|chapter|unit)/i },
 ];
+
+/** Broad "what now / how am I doing" questions need the full picture. */
+const BROAD =
+  /(what should i|what do i|do next|what next|next step|how am i|am i behind|overall|summary|status|biggest)/i;
 
 export function decideNeeds(question: string): ContextNeeds {
   const needs: ContextNeeds = {
@@ -38,6 +60,14 @@ export function decideNeeds(question: string): ContextNeeds {
     materials: false,
   };
   for (const r of RULES) if (r.re.test(question)) needs[r.key] = true;
+  // "What should I do next?" style questions need the whole picture, compactly.
+  if (BROAD.test(question)) {
+    needs.plan = true;
+    needs.revisions = true;
+    needs.mastery = true;
+    needs.sessions = true;
+    needs.goals = true;
+  }
   // Always give a minimal anchor so answers are never contextless.
   if (!Object.values(needs).some(Boolean)) {
     needs.plan = true;
@@ -56,6 +86,8 @@ const STOP = new Set([
   "what","should","study","today","the","and","for","how","are","was","with","that","this","have",
   "only","hour","hours","time","my","me","am","is","on","in","to","of","a","an","do","i","progress",
   "progressing","learning","course","material","weakest","areas","due","revision","prioritize","next",
+  "recent","recently","lately","biggest","area","work","completed","done","doing","week","been",
+  "been","status","summary","overall","practice","priority","prioritise","need","now","from","get",
 ]);
 
 function tokens(q: string): string[] {
@@ -114,30 +146,6 @@ ${materials.length ? materials.map(describeMaterial).join("\n") : "- none upload
   );
   if (materials.length) needs.materials = false; // already covered above
 
-  // --- Entity match: if the question names something the user owns, pull its detail.
-  const qTokens = tokens(question);
-  if (qTokens.length) {
-    const hit = (name: string) => {
-      const n = name.toLowerCase();
-      return qTokens.some((t) => n.includes(t));
-    };
-    const matchedMaterials = materials.filter((m) => hit(m.title));
-    const matchedSubjects = subjects.filter((s) => hit(s.name));
-    if (matchedMaterials.length || matchedSubjects.length) {
-      parts.push(
-        `ITEMS THE QUESTION REFERS TO:
-${matchedSubjects.map((s) => `- subject "${s.name}"`).join("\n")}
-${matchedMaterials.map(describeMaterial).join("\n")}`.trim(),
-      );
-      needs.mastery = true;
-      needs.sessions = true;
-    } else if (/\b(progress|how am i|going|doing)\b/i.test(question)) {
-      parts.push(
-        "ITEMS THE QUESTION REFERS TO: no subject, material or course in the library matches the name in the question.",
-      );
-    }
-  }
-
   const topicTitle = new Map<string, string>();
   const loadTopics = async () => {
     if (topicTitle.size) return;
@@ -148,6 +156,39 @@ ${matchedMaterials.map(describeMaterial).join("\n")}`.trim(),
       .limit(500);
     for (const t of data ?? []) topicTitle.set(t.id, t.title);
   };
+
+  // --- Entity match: if the question names something the user owns, pull its detail.
+  const qTokens = tokens(question);
+  if (qTokens.length) {
+    const hit = (name: string) => {
+      const n = name.toLowerCase();
+      return qTokens.some((t) => (t.length >= 4 ? n.includes(t) : new RegExp(`\\b${t}\\b`).test(n)));
+    };
+    const matchedMaterials = materials.filter((m) => hit(m.title));
+    const matchedSubjects = subjects.filter((s) => hit(s.name));
+    await loadTopics();
+    const matchedTopics = [...topicTitle.values()].filter(hit).slice(0, 10);
+    if (matchedMaterials.length || matchedSubjects.length || matchedTopics.length) {
+      parts.push(
+        `ITEMS THE QUESTION REFERS TO:
+${matchedSubjects.map((s) => `- subject "${s.name}"`).join("\n")}
+${matchedMaterials.map(describeMaterial).join("\n")}
+${matchedTopics.map((t) => `- topic "${t}"`).join("\n")}`
+          .split("\n")
+          .filter((l) => l.trim())
+          .join("\n"),
+      );
+      // A named item means the learner wants their real progress on it.
+      needs.mastery = true;
+      needs.sessions = true;
+      needs.revisions = true;
+      needs.plan = true;
+    } else if (/\b(progress|progressing|how am i|going|doing|status|done|completed)\b/i.test(question)) {
+      parts.push(
+        "ITEMS THE QUESTION REFERS TO: no subject, material, course or topic in the library matches the name in the question.",
+      );
+    }
+  }
 
   if (needs.plan) {
     const { data } = await supabase
