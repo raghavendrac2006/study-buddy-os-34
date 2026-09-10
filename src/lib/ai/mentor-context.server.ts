@@ -144,30 +144,6 @@ ${materials.length ? materials.map(describeMaterial).join("\n") : "- none upload
   );
   if (materials.length) needs.materials = false; // already covered above
 
-  // --- Entity match: if the question names something the user owns, pull its detail.
-  const qTokens = tokens(question);
-  if (qTokens.length) {
-    const hit = (name: string) => {
-      const n = name.toLowerCase();
-      return qTokens.some((t) => n.includes(t));
-    };
-    const matchedMaterials = materials.filter((m) => hit(m.title));
-    const matchedSubjects = subjects.filter((s) => hit(s.name));
-    if (matchedMaterials.length || matchedSubjects.length) {
-      parts.push(
-        `ITEMS THE QUESTION REFERS TO:
-${matchedSubjects.map((s) => `- subject "${s.name}"`).join("\n")}
-${matchedMaterials.map(describeMaterial).join("\n")}`.trim(),
-      );
-      needs.mastery = true;
-      needs.sessions = true;
-    } else if (/\b(progress|how am i|going|doing)\b/i.test(question)) {
-      parts.push(
-        "ITEMS THE QUESTION REFERS TO: no subject, material or course in the library matches the name in the question.",
-      );
-    }
-  }
-
   const topicTitle = new Map<string, string>();
   const loadTopics = async () => {
     if (topicTitle.size) return;
@@ -178,6 +154,39 @@ ${matchedMaterials.map(describeMaterial).join("\n")}`.trim(),
       .limit(500);
     for (const t of data ?? []) topicTitle.set(t.id, t.title);
   };
+
+  // --- Entity match: if the question names something the user owns, pull its detail.
+  const qTokens = tokens(question);
+  if (qTokens.length) {
+    const hit = (name: string) => {
+      const n = name.toLowerCase();
+      return qTokens.some((t) => (t.length >= 4 ? n.includes(t) : new RegExp(`\\b${t}\\b`).test(n)));
+    };
+    const matchedMaterials = materials.filter((m) => hit(m.title));
+    const matchedSubjects = subjects.filter((s) => hit(s.name));
+    await loadTopics();
+    const matchedTopics = [...topicTitle.values()].filter(hit).slice(0, 10);
+    if (matchedMaterials.length || matchedSubjects.length || matchedTopics.length) {
+      parts.push(
+        `ITEMS THE QUESTION REFERS TO:
+${matchedSubjects.map((s) => `- subject "${s.name}"`).join("\n")}
+${matchedMaterials.map(describeMaterial).join("\n")}
+${matchedTopics.map((t) => `- topic "${t}"`).join("\n")}`
+          .split("\n")
+          .filter((l) => l.trim())
+          .join("\n"),
+      );
+      // A named item means the learner wants their real progress on it.
+      needs.mastery = true;
+      needs.sessions = true;
+      needs.revisions = true;
+      needs.plan = true;
+    } else if (/\b(progress|progressing|how am i|going|doing|status|done|completed)\b/i.test(question)) {
+      parts.push(
+        "ITEMS THE QUESTION REFERS TO: no subject, material, course or topic in the library matches the name in the question.",
+      );
+    }
+  }
 
   if (needs.plan) {
     const { data } = await supabase
