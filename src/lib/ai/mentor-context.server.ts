@@ -86,6 +86,8 @@ const STOP = new Set([
   "what","should","study","today","the","and","for","how","are","was","with","that","this","have",
   "only","hour","hours","time","my","me","am","is","on","in","to","of","a","an","do","i","progress",
   "progressing","learning","course","material","weakest","areas","due","revision","prioritize","next",
+  "recent","recently","lately","biggest","area","work","completed","done","doing","week","been",
+  "been","status","summary","overall","practice","priority","prioritise","need","now","from","get",
 ]);
 
 function tokens(q: string): string[] {
