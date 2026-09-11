@@ -81,6 +81,13 @@ function iso(d: Date) {
   return d.toISOString().slice(0, 10);
 }
 
+const DAILY_DECISION =
+  /(what should i study|what should i do|do next|what next|next step|priorit|start with|\b(today|tonight|now)\b|\b\d+\s*(?:hour|hours|hr|hrs|minute|minutes|min|mins)\b)/i;
+
+function isCompleteStatus(status: string) {
+  return status === "done" || status === "completed" || status === "skipped";
+}
+
 /** Words too generic to use for entity matching. */
 const STOP = new Set([
   "what","should","study","today","the","and","for","how","are","was","with","that","this","have",
@@ -114,6 +121,16 @@ export async function buildMentorContext(
   const monthAgo = iso(new Date(now.getTime() - 30 * 86_400_000));
   const inWeek = iso(new Date(now.getTime() + 7 * 86_400_000));
   const parts: string[] = [`Today's date: ${todayStr}`];
+  const isDailyDecision = DAILY_DECISION.test(question);
+
+  if (isDailyDecision) {
+    parts.push(`DAILY DECISION ORDER (mandatory):
+1. Pending activities scheduled today, ordered by priority.
+2. Overdue or today-due revisions.
+3. Upcoming pending activities and revisions only after today's work.
+4. Use weak mastery and recent actual study only to break ties within the above groups.
+5. If groups 1 and 2 are both empty, say there is no scheduled work or due revision, then suggest at most one exact item from the library or weakness data.`);
+  }
 
   // --- Always-on compact inventory: real names, so nothing is treated generically.
   const [subjectsRes, materialsRes] = await Promise.all([
@@ -193,22 +210,37 @@ ${matchedTopics.map((t) => `- topic "${t}"`).join("\n")}`
   if (needs.plan) {
     const { data } = await supabase
       .from("plan_activities")
-      .select("scheduled_date,title,activity_type,estimated_minutes,status,priority")
+      .select(
+        "scheduled_date,title,activity_type,estimated_minutes,actual_minutes,status,priority,completed_at",
+      )
       .eq("user_id", userId)
       .gte("scheduled_date", todayStr)
       .lte("scheduled_date", inWeek)
       .order("scheduled_date")
       .order("priority", { ascending: false })
       .limit(40);
+    const activities = data ?? [];
+    const todayPending = activities.filter(
+      (a) => a.scheduled_date === todayStr && !isCompleteStatus(a.status),
+    );
+    const todayCompleted = activities.filter(
+      (a) => a.scheduled_date === todayStr && isCompleteStatus(a.status),
+    );
+    const upcomingPending = activities.filter(
+      (a) => a.scheduled_date > todayStr && !isCompleteStatus(a.status),
+    );
+    const describeActivity = (a: (typeof activities)[number]) =>
+      `- ${a.scheduled_date} | priority ${a.priority} | ${a.activity_type} | ${a.title} | planned ${a.estimated_minutes}min | status ${a.status}${
+        isCompleteStatus(a.status) && a.status !== "skipped" ? ` | actual ${a.actual_minutes}min` : ""
+      }`;
     parts.push(
-      data?.length
-        ? `PLANNED ACTIVITIES (today → +7d):\n${data
-            .map(
-              (a) =>
-                `- ${a.scheduled_date} | ${a.activity_type} | ${a.title} | ${a.estimated_minutes}min | ${a.status}`,
-            )
-            .join("\n")}`
-        : "PLANNED ACTIVITIES (today → +7d): none scheduled.",
+      `TODAY'S PENDING SCHEDULED ACTIVITIES:\n${
+        todayPending.length ? todayPending.map(describeActivity).join("\n") : "- none scheduled and pending"
+      }\nTODAY'S COMPLETED SCHEDULED ACTIVITIES (evidence only; never recommend as pending):\n${
+        todayCompleted.length ? todayCompleted.map(describeActivity).join("\n") : "- none completed"
+      }\nUPCOMING PENDING SCHEDULED ACTIVITIES (tomorrow → +7d):\n${
+        upcomingPending.length ? upcomingPending.map(describeActivity).join("\n") : "- none scheduled"
+      }`,
     );
   }
 
@@ -222,17 +254,26 @@ ${matchedTopics.map((t) => `- topic "${t}"`).join("\n")}`
       .lte("due_date", inWeek)
       .order("due_date")
       .limit(30);
+    const revisions = data ?? [];
+    const dueNow = revisions.filter((r) => r.due_date <= todayStr);
+    const upcoming = revisions.filter((r) => r.due_date > todayStr);
+    const describeRevision = (r: (typeof revisions)[number]) =>
+      `- ${r.due_date} | ${topicTitle.get(r.topic_id) ?? "unknown topic"} | status ${r.status}${
+        r.due_date < todayStr ? " | OVERDUE" : " | DUE TODAY"
+      }`;
     parts.push(
-      data?.length
-        ? `REVISIONS DUE (up to +7d):\n${data
-            .map(
-              (r) =>
-                `- ${r.due_date} | ${topicTitle.get(r.topic_id) ?? "topic"} | ${r.status}${
-                  r.due_date < todayStr ? " (OVERDUE)" : ""
-                }`,
-            )
-            .join("\n")}`
-        : "REVISIONS DUE: none.",
+      `OVERDUE OR TODAY-DUE REVISIONS:\n${
+        dueNow.length ? dueNow.map(describeRevision).join("\n") : "- none"
+      }\nUPCOMING REVISIONS (tomorrow → +7d):\n${
+        upcoming.length
+          ? upcoming
+              .map(
+                (r) =>
+                  `- ${r.due_date} | ${topicTitle.get(r.topic_id) ?? "unknown topic"} | status ${r.status}`,
+              )
+              .join("\n")
+          : "- none"
+      }`,
     );
   }
 
@@ -277,9 +318,11 @@ ${matchedTopics.map((t) => `- topic "${t}"`).join("\n")}`
             .slice(0, 12)
             .map(
               (s) =>
-                `- ${s.started_at.slice(0, 10)} | ${s.topic ?? "unspecified"} | ${
+                `- ${s.started_at.slice(0, 10)} | ${s.topic ?? "unspecified"} | actual ${
                   s.actual_minutes
-                }/${s.planned_minutes} min${s.understood === false ? " | struggled" : ""}`,
+                }min | session target ${s.planned_minutes}min${
+                  s.understood === false ? " | learner marked struggled" : ""
+                }`,
             )
             .join("\n")}`
         : "STUDY SESSIONS (last 30 days): none recorded.",
