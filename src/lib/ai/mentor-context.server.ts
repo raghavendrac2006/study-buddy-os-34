@@ -85,7 +85,7 @@ const DAILY_DECISION =
   /(what should i study|what should i do|do next|what next|next step|priorit|start with|\b(today|tonight|now)\b|\b\d+\s*(?:hour|hours|hr|hrs|minute|minutes|min|mins)\b)/i;
 
 function isCompleteStatus(status: string) {
-  return status === "done" || status === "completed";
+  return status === "done" || status === "completed" || status === "skipped";
 }
 
 /** Words too generic to use for entity matching. */
@@ -231,7 +231,7 @@ ${matchedTopics.map((t) => `- topic "${t}"`).join("\n")}`
     );
     const describeActivity = (a: (typeof activities)[number]) =>
       `- ${a.scheduled_date} | priority ${a.priority} | ${a.activity_type} | ${a.title} | planned ${a.estimated_minutes}min | status ${a.status}${
-        isCompleteStatus(a.status) ? ` | actual ${a.actual_minutes}min` : ""
+        isCompleteStatus(a.status) && a.status !== "skipped" ? ` | actual ${a.actual_minutes}min` : ""
       }`;
     parts.push(
       `TODAY'S PENDING SCHEDULED ACTIVITIES:\n${
