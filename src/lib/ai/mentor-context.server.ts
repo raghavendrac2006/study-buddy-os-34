@@ -318,9 +318,11 @@ ${matchedTopics.map((t) => `- topic "${t}"`).join("\n")}`
             .slice(0, 12)
             .map(
               (s) =>
-                `- ${s.started_at.slice(0, 10)} | ${s.topic ?? "unspecified"} | ${
+                `- ${s.started_at.slice(0, 10)} | ${s.topic ?? "unspecified"} | actual ${
                   s.actual_minutes
-                }/${s.planned_minutes} min${s.understood === false ? " | struggled" : ""}`,
+                }min | session target ${s.planned_minutes}min${
+                  s.understood === false ? " | learner marked struggled" : ""
+                }`,
             )
             .join("\n")}`
         : "STUDY SESSIONS (last 30 days): none recorded.",

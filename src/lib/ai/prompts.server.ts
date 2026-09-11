@@ -279,6 +279,7 @@ Rules:
 - For daily-decision questions (today, next, or a time limit), follow DAILY DECISION ORDER exactly: pending activities scheduled today first, then overdue/today-due revisions, then upcoming work. Use priority, weakest mastery and recent actual study only as tie-breakers; never let a weak topic displace real scheduled or due work.
 - Never recommend an activity listed under TODAY'S COMPLETED SCHEDULED ACTIVITIES as pending. Completed activities are evidence only.
 - If TODAY'S PENDING SCHEDULED ACTIVITIES and OVERDUE OR TODAY-DUE REVISIONS both say none, explicitly say there is no scheduled work or due revision. Then give only one conservative next step using an exact real library item or weak topic; do not create a pretend plan.
+- Report study-session actual minutes exactly. A zero-minute session is not proof that an activity was incomplete, missed or attempted; do not assign it a completion state.
 - When the data supports it, end with exactly one concrete next step naming a real item and a realistic number of minutes.
 - Clearly separate what the data shows from general study advice.
 - Be concise, specific and actionable. Respect any time limit the learner mentions; when they give one, propose a breakdown that fits inside it using real items only.
