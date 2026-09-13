@@ -84,8 +84,106 @@ function iso(d: Date) {
 const DAILY_DECISION =
   /(what should i study|what should i do|do next|what next|next step|priorit|start with|\b(today|tonight|now)\b|\b\d+\s*(?:hour|hours|hr|hrs|minute|minutes|min|mins)\b)/i;
 
+/** Looking-back questions: overall progress, this week, improvement, what's completed. */
+const RETROSPECTIVE =
+  /(how (am|are|is|much|many)|progress|progressing|improv|going|this week|last week|past week|recent|recently|lately|so far|overall|summary|completed|finished|consistent|been doing|catch up|falling behind|behind)/i;
+
 function isCompleteStatus(status: string) {
   return status === "done" || status === "completed" || status === "skipped";
+}
+
+function fmtMin(m: number) {
+  return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m (${m} min)` : `${m} min`;
+}
+
+/** Compact deterministic aggregates for longer-term progress questions. */
+async function progressSummary(supabase: DB, userId: string, now: Date): Promise<string> {
+  const day = 86_400_000;
+  const d = (n: number) => iso(new Date(now.getTime() - n * day));
+  const week0 = d(7); // last 7 days
+  const week1 = d(14); // previous 7 days
+  const since = d(30);
+
+  const [sessRes, pracRes, codeRes, planRes, revRes] = await Promise.all([
+    supabase
+      .from("study_sessions")
+      .select("started_at,actual_minutes,understood,topic")
+      .eq("user_id", userId)
+      .gte("started_at", `${since}T00:00:00Z`)
+      .limit(300),
+    supabase
+      .from("practice_sessions")
+      .select("practiced_on,question_count,correct_count")
+      .eq("user_id", userId)
+      .gte("practiced_on", since)
+      .limit(100),
+    supabase
+      .from("coding_problems")
+      .select("solved_on,result,difficulty")
+      .eq("user_id", userId)
+      .gte("solved_on", since)
+      .limit(200),
+    supabase
+      .from("plan_activities")
+      .select("scheduled_date,title,status,actual_minutes")
+      .eq("user_id", userId)
+      .gte("scheduled_date", since)
+      .lte("scheduled_date", iso(now))
+      .limit(200),
+    supabase
+      .from("revision_schedule")
+      .select("due_date,status")
+      .eq("user_id", userId)
+      .gte("due_date", since)
+      .limit(200),
+  ]);
+
+  const sessions = sessRes.data ?? [];
+  const inRange = (date: string, from: string, to?: string) =>
+    date >= from && (to === undefined || date < to);
+  const sessDay = (s: { started_at: string }) => s.started_at.slice(0, 10);
+  const minutes = (rows: { actual_minutes: number | null }[]) =>
+    rows.reduce((t, r) => t + (r.actual_minutes ?? 0), 0);
+  const thisWeek = sessions.filter((s) => inRange(sessDay(s), week0));
+  const prevWeek = sessions.filter((s) => inRange(sessDay(s), week1, week0));
+  const activeDays = new Set(thisWeek.map(sessDay)).size;
+
+  const prac = pracRes.data ?? [];
+  const pracWeek = prac.filter((p) => inRange(p.practiced_on, week0));
+  const pracPrev = prac.filter((p) => inRange(p.practiced_on, week1, week0));
+  const acc = (rows: { question_count: number; correct_count: number }[]) => {
+    const q = rows.reduce((t, r) => t + r.question_count, 0);
+    const c = rows.reduce((t, r) => t + r.correct_count, 0);
+    return q ? `${c}/${q} correct (${Math.round((c / q) * 100)}%)` : "no questions attempted";
+  };
+
+  const code = codeRes.data ?? [];
+  const codeWeek = code.filter((c) => inRange(c.solved_on, week0));
+
+  const planRows = planRes.data ?? [];
+  const planDone = planRows.filter((a) => a.status === "done" || a.status === "completed");
+  const planPending = planRows.filter((a) => !isCompleteStatus(a.status));
+
+  const revRows = revRes.data ?? [];
+  const revDone = revRows.filter((r) => r.status === "done");
+
+  return `PROGRESS SUMMARY (deterministic aggregates, last 30 days — counts are exact, do not estimate beyond them):
+- Study sessions last 7 days: ${thisWeek.length} session(s), ${fmtMin(minutes(thisWeek))} actually studied on ${activeDays} distinct day(s).
+- Study sessions previous 7 days (for trend only): ${prevWeek.length} session(s), ${fmtMin(minutes(prevWeek))}.
+- Study sessions last 30 days: ${sessions.length} session(s), ${fmtMin(minutes(sessions))}.
+- Aptitude/reasoning last 7 days: ${pracWeek.length} session(s), ${acc(pracWeek)}; previous 7 days: ${pracPrev.length} session(s), ${acc(pracPrev)}.
+- Coding/DSA last 7 days: ${codeWeek.length} problem(s) logged; last 30 days: ${code.length}.
+- Scheduled plan activities last 30 days: ${planDone.length} completed, ${planPending.length} still pending (pending is planned work, not an achievement).
+- Revisions last 30 days: ${revDone.length} marked done, ${revRows.length - revDone.length} not done.
+${
+  thisWeek.length
+    ? `- Most recent study sessions: ${thisWeek
+        .slice(0, 5)
+        .map((s) => `${sessDay(s)} ${s.topic ?? "unspecified"} ${s.actual_minutes ?? 0}min`)
+        .join("; ")}.`
+    : "- No study session recorded in the last 7 days."
+}
+Material/course progress is only what the LIBRARY section states; never estimate a completion percentage that is not shown there.`;
 }
 
 /** Words too generic to use for entity matching. */
