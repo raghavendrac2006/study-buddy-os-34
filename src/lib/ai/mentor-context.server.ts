@@ -230,6 +230,18 @@ export async function buildMentorContext(
 5. If groups 1 and 2 are both empty, say there is no scheduled work or due revision, then suggest at most one exact item from the library or weakness data.`);
   }
 
+  // --- Looking-back questions get compact aggregates instead of long row dumps.
+  const isRetrospective = RETROSPECTIVE.test(question);
+  if (isRetrospective) {
+    parts.push(await progressSummary(supabase, userId, now));
+    needs.sessions = false; // covered by the aggregates above
+    needs.practice = false;
+    needs.coding = false;
+    needs.mastery = true;
+  }
+
+
+
   // --- Always-on compact inventory: real names, so nothing is treated generically.
   const [subjectsRes, materialsRes] = await Promise.all([
     supabase.from("subjects").select("name,archived").eq("user_id", userId).limit(30),
